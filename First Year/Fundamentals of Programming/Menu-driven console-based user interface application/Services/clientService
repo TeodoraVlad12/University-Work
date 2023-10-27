@@ -1,0 +1,74 @@
+import random
+
+from src.domain.client import ClientValidator, Client
+from src.repository.clientRepo import ClientRepo
+from src.repository.repositoryException import RepositoryException
+
+
+class ClientService:
+    def __init__(self, repo: ClientRepo, validator: ClientValidator):
+        self._repo=repo
+        self._validator=validator
+
+    def add_client(self, id, name):
+        new_client=Client(id, name)
+        self._validator.validate(new_client)
+        self._repo.add(new_client)
+
+    def delete_client_by_name(self, name):
+        #Deletes the client with a given name
+        ok=0
+        listOfClients=self._repo.get_all()
+        for i in range(len(listOfClients)):
+            if listOfClients[i].name==name:
+                self._repo.delete_one(listOfClients[i].id)
+                ok=1
+        if ok==0:
+            raise RepositoryException("No client with this name")
+
+    def update_a_client(self, name, new_name ):
+        #Updates the name of a client with a given name
+        ok=0
+        listOfClients = self._repo.get_all()
+        for i in range(len(listOfClients)):
+            if listOfClients[i].name == name:
+                self._repo.update_client_name(listOfClients[i], new_name)
+                ok = 1
+        if ok == 0:
+            raise RepositoryException("No client with this name")
+
+    def get_all_clients(self):
+        return self._repo.get_all()
+
+
+    def generate_clients(self, n: int):
+        names=["Maria", "Ioana","Vasile","Ion","Marius","Silviu","Andrei","Andreea","Steluta"]
+        i=0
+        while i<n:
+            name=random.choice(names)
+            id=random.randint(1000,9990)
+            client=Client(id,name)
+            if client.id not in self._repo._data:
+                i+=1
+                self._repo.add(client)
+
+    def search(self, something):
+        something=something.lower()
+        found_clients=[]
+
+        for client in self._repo.get_all():
+            if str(client.id).lower().find(something)!=1 or slient.name.lower().find(something)!=-1:
+                found_clients.append(client)
+        return found_clients
+
+
+
+'''
+repo=ClientRepo()
+validator=ClientValidator()
+service=ClientService(repo,validator)
+service.generate_clients(20)
+list=service.get_all_clients()
+for i in range(len(list)):
+    print (list[i])
+'''
