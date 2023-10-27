@@ -1,0 +1,30 @@
+from src.domain.rental import Rental
+from src.repository.repositoryException import RepositoryException
+import datetime
+
+class RentalRepo():
+    def __init__(self):
+        self._data={}
+
+    def get_all_rentals(self):
+        return list(self._data.values())
+
+
+    def add(self, rental: Rental):
+        if rental.rental_id in self._data.keys():
+            raise RepositoryException("Duplicated ID")
+        #if rental.book_id not in self._data.values():
+            #raise RepositoryException("Inexistent ID")
+
+        rentalsList=self.get_all_rentals()
+        ok=0
+        for i in range(len(rentalsList)):
+            if rentalsList[i].book_id== rental.book_id and rental.returned_date==datetime.datetime(2222, 2, 22):
+                raise RepositoryException("Book rented at this moment")
+        self._data[rental.rental_id]=rental
+
+
+
+
+    def __len__(self):
+        return len(self._data)
