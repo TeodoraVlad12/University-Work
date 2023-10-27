@@ -1,0 +1,56 @@
+from src.domain.book import Book
+from src.repository.repositoryException import RepositoryException
+
+
+class BookRepo():
+    def __init__(self):
+        self._data={}
+
+    def add(self, new_book: Book):
+        if new_book.id in self._data:
+            raise RepositoryException("Book already in repo")
+        self._data[new_book.id]=new_book
+
+    def get(self, book_id):
+        try:
+            return self._data[book_id]
+        except KeyError:
+            raise RepositoryException("Book not in repo")
+
+    def get_all(self):
+        return list(self._data.values())
+
+    def delete_one(self, id):
+        self.check_existence(id)
+        self._data.pop(id)
+
+
+    def update_book_title(self, book: Book, new_title):
+        book.title=new_title
+
+    def update_book_author(self, book: Book, new_author):
+        book.author=new_author
+
+    def update_book_status(self, book: Book, new_status):
+        book.status=new_status
+
+
+    def check_existence(self, book_id):
+        if book_id not in self._data:
+            raise RepositoryException("No book with this id")
+
+    def get_by_id(self, book_id):
+        self.check_existence(book_id)
+        return self._data[book_id]
+
+    def get_author_by_id(self, book_id):
+        self.check_existence(book_id)
+        return self._data[book_id].author
+
+    def get_book_by_id(self, book_id):
+        return self._data.get(book_id)
+
+
+    def __len__(self):
+        return len(self._data)
+
