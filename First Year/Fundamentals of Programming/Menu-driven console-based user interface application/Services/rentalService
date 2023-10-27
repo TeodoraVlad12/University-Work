@@ -1,0 +1,188 @@
+from src.domain.book import BookValidator, Book
+from src.domain.client import Client
+from src.domain.rental import RentalValidator, Rental
+from src.repository.bookRepo import BookRepo
+from src.repository.clientRepo import ClientRepo
+from src.repository.rentalRepo import RentalRepo
+from src.repository.repositoryException import RepositoryException
+from src.services.bookService import BookService
+import datetime
+
+class BookRentDTO:
+    def __init__(self, book: Book, rented_days: int):
+        self._book= book
+        self._rented_days= rented_days
+
+    @property
+    def book(self):
+        return self._book
+
+    @property
+    def rented_days(self):
+        return self._rented_days
+
+    @rented_days.setter
+    def rented_days(self, new_rented_days):
+        self._rented_days=new_rented_days
+
+    def __str__(self):
+        return str(self._book) + " Rented for " + str(self._rented_days) + " days\n"
+
+
+class ClientRentDTO:
+    def __init__(self, client: Client, rented_days: int):
+        self._client= client
+        self._rented_days=rented_days
+
+    @property
+    def client(self):
+        return self._client
+
+    @property
+    def rented_days(self):
+        return self._rented_days
+
+    @rented_days.setter
+    def rented_days(self, new_rented_days):
+        self._rented_days=new_rented_days
+
+    def __str__(self):
+        return str(self._client) + " has rented for " + str(self._rented_days) + " days\n"
+
+
+
+class AuthorRentDTO:
+    def __init__(self, rental: Rental, book: Book, rented_days: int):
+        self._rental = rental
+        self._rented_days = rented_days
+        self._book=book
+
+    @property
+    def rental(self):
+        return self._rental
+
+    @property
+    def book(self):
+        return self._book
+
+    @property
+    def author(self):
+        return self._book.author
+
+    @property
+    def rented_days(self):
+        return self._rented_days
+
+
+    @rented_days.setter
+    def rented_days(self, new_rented_days):
+        self._rented_days=new_rented_days
+
+    def __str__(self):
+        return str(self.book.author) + " has been rented for " + str(self._rented_days) + " days"
+
+
+
+class RentalService:
+    def __init__(self, rentalRepo: RentalRepo, bookRepo: BookRepo, clientRepo: ClientRepo, rentalValidator: RentalValidator):
+        self._rentalRepo=rentalRepo
+        self._rentalValidator=rentalValidator
+        self._bookRepo=bookRepo
+        self._clientrepo=clientRepo
+
+    def add(self, rental_id, book_id, client_id, rented_date, returned_date):
+        r=Rental(rental_id, book_id, client_id, rented_date, returned_date)  #Create the instance rental
+        self._rentalValidator.validate(r)                                    #Validate it
+        rentals=self._rentalRepo.get_all_rentals()
+        self._rentalRepo.add(r)                                              #Add it to repo
+
+
+
+    def return_book(self, rental_id, returned_date):
+        rentalsList=self._rentalRepo.get_all_rentals()
+        for i in range(len(rentalsList)):
+            if rentalsList[i].rental_id==rental_id:
+                rentalsList[i].returned_date=returned_date
+                rental=rentalsList[i]
+                book_id=rental.book_id
+
+
+    def return_book_id_by_rental_id(self, rental_id):
+        rentalsList = self._rentalRepo.get_all_rentals()
+        for i in range(len(rentalsList)):
+            if rentalsList[i].rental_id == rental_id:
+                return rentalsList[i].book_id
+
+    def get_all_rentals(self):
+        return self._rentalRepo.get_all_rentals()
+
+    #Statistics
+    def most_rented_books(self):
+        dto={}
+        #Keys are books' IDs and values are DTOs instances
+        for rental in self._rentalRepo.get_all_rentals():
+            if rental.book_id not in dto.keys() and len(rental)!=0:
+                dto[rental.book_id]=BookRentDTO(self._bookRepo.get_by_id(rental.book_id),len(rental))
+            else:
+                dto[rental.book_id].rented_days += len(rental)
+
+        for book in self._bookRepo.get_all():
+            if book.id not in dto.keys():
+                dto[book.id]=BookRentDTO(book, 0)
+        results=list(dto.values())
+        results.sort(key=lambda x: x.rented_days, reverse=True)
+        return results
+
+
+    def most_active_clients(self):
+        dto={}
+        #Keys are clients' IDs and values are DTOs instances
+        for rental in self._rentalRepo.get_all_rentals():
+            if rental.client_id not in dto.keys() and len(rental)!=0:
+                dto[rental.client_id]=ClientRentDTO(self._clientrepo.get_by_id(client_id), len(rental))
+            else:
+                dto[rental.client_id].rented_days += len(rental)
+        for client in self._clientrepo.get_all():
+             if client.id not in dto.keys():
+                 dto[client.id]=ClientRentDTO(client, 0)
+
+        results=list(dto.values())
+        results.sort(key=lambda x: x.rented_days, reverse=True)
+        return results
+
+    '''
+    def most_rented_authors(self):
+        dto={}
+        #Keys are authors' names and values are DTOs instances
+        for rental in self._rentalRepo.get_all_rentals():
+            author_name=self._bookRepo.get_author_by_id(rental.book_id)
+            if author_name not in dto.keys() and len(rental)!=0:
+                dto[author_name] =AuthorRentDTO(self._bookRepo.get_author_by_id(rental.book_id), len(rental))
+            else:
+                dto[author_name].rented_days += len(rental)
+        for rental in self._rentalRepo.get_all_rentals():
+            author_name = self._bookRepo.get_author_by_id(rental.book_id)
+            if author_name not in dto.keys():
+                dto[author_name]=AuthorRentDTO(self._bookRepo.get_author_by_id(rental.book_id), 0)
+
+        results=list(dto.values())
+        results.sort(key=lambda x: x.rented_days, reverse=True)
+        return results
+        '''
+
+    def most_rented_authors(self):
+        dto = {}
+        # Keys are authors' names and values are DTOs instances
+        for rental in self._rentalRepo.get_all_rentals():
+            author_name = self._bookRepo.get_author_by_id(rental.book_id)
+            if author_name not in dto.keys() and len(rental) != 0:
+                dto[author_name] = AuthorRentDTO(rental, self._bookRepo.get_book_by_id(rental.book_id), len(rental))
+            else:
+                dto[author_name].rented_days += len(rental)
+
+
+        results = list(dto.values())
+        results.sort(key=lambda x: x.rented_days, reverse=True)
+        return results
+
+
