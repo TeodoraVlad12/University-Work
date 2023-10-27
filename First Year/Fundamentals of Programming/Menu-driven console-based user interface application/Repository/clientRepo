@@ -1,0 +1,41 @@
+from src.domain.client import Client
+from src.repository.repositoryException import RepositoryException
+
+
+class ClientRepo():
+    def __init__(self):
+        self._data={}
+
+    def add(self, new_client: Client):
+        if new_client.id in self._data.keys():
+            raise RepositoryException("Client already in repo")
+        self._data[new_client.id]=new_client
+
+    def get(self, client_id):
+        try:
+            return self._data[client_id]
+        except KeyError:
+            raise RepositoryException("Client not in repo")
+
+    def get_all(self):
+        return list(self._data.values())
+
+    def delete_one(self, id):
+        self._data.pop(id)
+
+    def update_client_id(self, client, new_id):
+        client.id=new_id
+
+    def update_client_name(self, client, new_name):
+        client.name=new_name
+
+    def check_existence(self, client_id):
+        if client_id not in self._data.keys():
+            raise RepositoryException('No client with id ' + str(client_id))
+
+    def get_by_id(self, client_id):
+        self.check_existence(client_id)
+        return self._data[client_id]
+
+    def __len__(self):
+        return len(self._data)
