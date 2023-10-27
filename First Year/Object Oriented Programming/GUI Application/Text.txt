@@ -1,0 +1,11 @@
+42,green,444,4,https://img01.ztat.net/article/spp-media-p1/05e646c9868d4507ab601e08e8a90e4e/89cbb4d9f0794bb9b1a6cedf32290848.jpg?imwidth=762
+400,brown,400,400,www.400
+36,purple,455,20,https://m.media-amazon.com/images/I/71LEg3uuExL._AC_UL1500_.jpg
+36,greenn,800,20,https://m.media-amazon.com/images/I/61nqV-ecpfL._AC_UL1430_.jpg
+38,pink,700,20,https://m.media-amazon.com/images/I/61p6omKTuvL._AC_UL1500_.jpg
+40,magenta,600,20,https://m.media-amazon.com/images/I/81O6P7t5aQL._AC_UL1500_.jpg
+33,orange,33,33,33www
+34,rr,34,34,fffwww
+3,F,3,3,3www
+38,colour,300,5,www.photo
+300,colourr,400,400,wwwphoto
