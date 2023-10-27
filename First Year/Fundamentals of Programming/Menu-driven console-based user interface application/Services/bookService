@@ -1,0 +1,85 @@
+from src.domain.book import BookValidator, Book
+from src.repository.bookRepo import BookRepo
+from src.repository.repositoryException import RepositoryException
+import random
+
+
+class BookService:
+    def __init__(self, repo: BookRepo, validator: BookValidator):
+        self._repo=repo
+        self._validator=validator
+
+    def add_book(self, id, title, author,status):
+        new_book=Book(id, title, author,status)
+        self._validator.validate(new_book)
+        self._repo.add(new_book)
+
+    def delete_book_by_author(self, author):
+        #Deletes the books with a given author
+        ok=0
+        listOfBooks=self._repo.get_all()
+        for i in range(len(listOfBooks)):
+            if listOfBooks[i].author==author:
+                self._repo.delete_one(listOfBooks[i].id)
+                ok=1
+        if ok==0:
+            raise RepositoryException("No books with this author")
+
+    def update_a_book(self, title, new_author ):
+        #Updates the author of books with a given title
+        ok=0
+        listOfBooks = self._repo.get_all()
+        for i in range(len(listOfBooks)):
+            if listOfBooks[i].title == title:
+                self._repo.update_book_author(listOfBooks[i], new_author)
+                ok = 1
+        if ok == 0:
+            raise RepositoryException("No books with this title")
+
+    def update_a_book_status(self, book_id, new_status):
+        ok=0
+        listOfBooks = self._repo.get_all()
+        for i in range(len(listOfBooks)):
+            if listOfBooks[i].id == book_id:
+                self._repo.update_book_status(listOfBooks[i], new_status)
+                ok = 1
+        #if ok == 0:
+            #raise RepositoryException("No book with this id")
+
+    def get_all_books(self):
+        return self._repo.get_all()
+
+
+    def generate_books(self, n: int):
+        authors=["George Calinescu", "Ion Creanga", "Ioan Slavici", "Mircea Eliade", "Liviu Rebreanu", "Mihail Sadoveanu", "Camil Petrescu", "Marin Preda"]
+        titles=["Title 1","Ttile 2","Title 3","Ttile 4","Title 5","Ttile 6","Title 7","Ttile 8","Title 9","Ttile 10","Title 11","Ttile 12"]
+        i=0
+        while i<n:
+            author=random.choice(authors)
+            title=random.choice(titles)
+            id=random.randint(100,999)
+            status="available"
+            book=Book(id,title,author,status)
+            if book.id not in self._repo._data:
+                i+=1
+                self._repo.add(book)
+
+    def search(self, something):
+        something=something.lower()
+        found_books=[]
+        for book in self._repo.get_all():
+            if str(book.id).lower().find(something) != -1 or str(book.title).lower().find(something)!=-1 or str(book.author).lower().find(something)!=-1:
+                found_books.append(book)
+        return found_books
+
+'''
+repo=BookRepo()
+validator=BookValidator()
+service=BookService(repo,validator)
+service.generate_books(20)
+list=service.get_all_books()
+for i in range(len(list)):
+    print (list[i])
+
+'''
+
