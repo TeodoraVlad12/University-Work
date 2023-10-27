@@ -1,0 +1,62 @@
+%a. Write a predicate to compute the union of two sets.
+%
+%union([l1l2...ln], [p1p2...pn])= [], if l==0 and p ==0,
+%                                   l, if p==0,
+%                                   p, if l==0,
+%                            union([l2...ln],[p1p2..pn]), if l1 e p
+%                            union([l1l2...ln],[p2..pn]), if p1 e l
+%                            l1 + union([l2..ln],[p1p2..pn], if l1 !e p
+%                            p1 + union(l1l2..ln],[p2..pn], otherwise.
+%                          
+
+%Base cases:
+memberOf(X, [X|_]).
+memberOf(X, [_|Rest]) :- memberOf(X, Rest).
+
+% Base case:
+union([],[],[]).
+union([], Set2, Set2).  %this will also help us in the end to add all the elements from the second set
+union(Set1, [], Set1).
+
+
+% If the first element of the first set is in the second set, we don't
+% include it again.
+union([X|Rest1], Set2, Union) :-
+    memberOf(X, Set2),        % X is in Set2
+    union(Rest1, Set2, Union).
+
+% If the first element of the first set is not in the second set, we
+% include it in the union.
+union([X|Rest1], Set2, [X|Union]) :-
+    \+ memberOf(X, Set2),     % X is not in Set2
+    union(Rest1, Set2, Union).
+
+
+
+
+
+
+%b. Write a predicate to determine the set of all the pairs of elements in a list
+%Eg.: L = [a b c d] => [[a b] [a c] [a d] [b c] [b d] [c d]].
+%
+%mainSets([l1l2..ln]) = [], n=1
+%                       set(l1, [l2l3...ln]) + mainSets(l2..ln),othwise
+% 
+%set(X, [l1l2...ln]) = [], n=0
+%                      [X, l1] + set(X, l2..ln), otherwise
+
+
+%Base case:
+makingSets(_,[],[]).
+makingSets(X,[H|T],[[X,H] | RestSets]):-
+    makingSets(X,T,RestSets).
+
+
+%Base case:
+mainSets([],[]).
+mainSets([H|T], AllSets):-
+    makingSets(H, T, Pairs),
+    mainSets(T, RestSets),
+    union(Pairs, RestSets, AllSets).
+
+
