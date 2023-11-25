@@ -1,0 +1,1066 @@
+%Adding an element at the end of a list
+add_at_end([], Element, [Element]).
+add_at_end([H|T], Element, [H|Result]) :-
+    add_at_end(T, Element, Result).
+
+%Appending two lists:
+myappend([], L, L).
+myappend([H|T], L2, [H|R]):-
+    myappend(T, L2, R).
+
+
+
+%1.
+% a. Write a predicate to determine the lowest common multiple of a list formed from integer numbers.
+% b. Write a predicate to add a value v after 1-st, 2-nd, 4-th, 8-th, … element in a list.
+
+% a
+
+% Model matematic:
+% gcd(a, b) =
+%	a, b = 0
+%	b, a = 0
+%	gcd(a % b, b), a >= b
+%	gcd(a, b % a), a < b
+
+% gcd(A:number, B:number, R:number)
+% gcd(i, i, o)
+
+gcd(0, B, B) :- !.
+gcd(A, 0, A) :- !.
+gcd(A, B, R) :- A >= B,
+    A1 is A mod B,
+    gcd(A1, B, R), !.
+gcd(A, B, R) :- A < B,
+    B1 is B mod A,
+    gcd(A, B1, R), !.
+
+
+absolute(X, X) :- X >=0.
+absolute(X, Abs):- X <0, Abs is -X.
+
+
+lcm(X, Y, R) :-
+    gcd(X, Y, Res),
+    absolute(X*Y, AbsProduct),
+    R is AbsProduct // Res.
+
+
+lcm_list([],1).
+lcm_list([H | T], Result):-
+    lcm_list(T, RestLCM),
+    lcm(H, RestLCM, Result).
+
+
+
+
+%b
+%b. Write a predicate to add a value v after 1-st, 2-nd, 4-th, 8-th, … element in a list.
+
+insert_pow([], _, _, _, []).
+
+%The case when we add:
+insert_pow([H|T], V, POS, INDEX, [H, V|R]) :- POS =:= INDEX,
+    New_pos is POS * 2,
+    New_index is INDEX +1,
+    insert_pow(T, V, New_pos, New_index, R).
+
+%When we don't add:
+insert_pow([H|T], V, POS, INDEX, [H | R]) :-
+    New_index is INDEX+1,
+    insert_pow(T, V, POS, New_index, R).
+
+
+
+
+
+% ------------------------------------------------------------------------
+%2.
+% a. Write a predicate to remove all occurrences of a certain atom from a
+% list.
+% b. Define a predicate to produce a list of pairs (atom n) from an
+% initial list of atoms. In this initial list atom has
+%n occurrences.
+% Eg.: numberatom([1, 2, 1, 2, 1, 3, 1], X) => X = [[1, 4], [2, 2], [3,
+% 1]].
+
+
+
+%a
+remove_occ([], _, []).
+%When we have to remove:
+remove_occ([H | T], E, R):- H =:= E,
+    remove_occ(T, E, R).
+%When we have to add it:
+remove_occ([H | T], E, [H | Rest]) :- H =\= E,
+    remove_occ(T, E, Rest).
+
+
+% b. Define a predicate to produce a list of pairs (atom n) from an
+% initial list of atoms. In this initial list atom has
+%n occurrences.
+% Eg.: numberatom([1, 2, 1, 2, 1, 3, 1], X) => X = [[1, 4], [2, 2], [3,
+% 1]].
+
+count_occ([],_,0).
+count_occ([H|T], E, R) :- H =:= E,
+    count_occ(T, E, R1),
+    R is 1+R1.
+count_occ([H|T], E, R) :- H =\=E,
+    count_occ(T, E, R).
+
+
+
+numberatom([],[]).
+numberatom([H|T], [[H, RC ]| R]) :-
+    count_occ([H|T], H, RC),
+    remove_occ(T, H, RR),
+    numberatom(RR, R).
+
+% -----------------------------------------------------------------------
+%3.
+%a. Define a predicate to remove from a list all repetitive elements.
+%Eg.: l=[1,2,1,4,1,3,4] => l=[2,3])
+% b. Remove all occurrence of a maximum value from a list on integer
+% numbers.
+
+%a
+remove_repetitive([],[]).
+remove_repetitive([H|T],  R):-
+    count_occ(T, H, OCC),
+    OCC > 0,
+    remove_occ([H|T], H, RR),
+    remove_repetitive(RR, R).
+remove_repetitive([H|T], [H|R]):-
+    count_occ(T, H, OCC),
+    OCC =:= 0,
+    remove_repetitive(T, R).
+
+
+
+
+%b
+% Remove all occurrence of a maximum value from a list on integer
+% numbers
+
+
+max_of_two(A, B, A):-A >= B.
+ max_of_two(A, B, B):-A < B.
+
+find_max_in_list([X], X).
+find_max_in_list([H | T], Max) :-
+    find_max_in_list(T, MaxRest),
+    max_of_two(H, MaxRest, Max).
+
+remove_max_occ([],[]).
+remove_max_occ(List, Result):-
+    find_max_in_list(List, Max),
+    remove_occ(List, Max, Result).
+
+
+
+% -----------------------------------------------------------------------
+%4.
+%a. Write a predicate to determine the difference of two sets.
+% b. Write a predicate to add value 1 after every even element from a
+% list.
+
+%a
+
+%Predicate to check if E is in the list
+contains([V|_], V):-!.
+contains([_|T], V):-contains(T, V).
+
+difference([],_,[]).
+difference([H|T], B, R):-
+    contains(B, H),
+    difference(T, B, R), !.
+difference([H|T], B, [H|R]):-
+    difference(T, B, R).
+
+
+%b
+%b. Write a predicate to add value 1 after every even element from a list
+
+insert1([],[]).
+insert1([H|T], [H, 1|R]):-
+    H mod 2 =:= 0,
+    insert1(T, R).
+insert1([H|T], [H|R]):-
+    H mod 2 =\= 0,
+    insert1(T, R).
+
+
+% -----------------------------------------------------------------------
+
+%5.
+%a. Write a predicate to compute the union of two sets.
+% b. Write a predicate to determine the set of all the pairs of elements
+% in a list.
+%Eg.: L = [a b c d] => [[a b] [a c] [a d] [b c] [b d] [c d]]
+
+remove_o([],_,[]).
+remove_o([H|T], E, R):-
+    H =:= E,
+    remove_o(T, E, R).
+remove_o([H|T], E, [H|R]):-
+    H =\= E,
+    remove_o(T, E, R).
+
+union([],[],[]).
+union([H|T], B, [H|R]):-
+    remove_occ(T, H, R1),
+    remove_occ(B, H, R2),
+    union(R1,R2, R).
+union([],B,B).
+
+
+
+%b
+%%b. Write a predicate to determine the set of all the pairs of elements in a list
+
+
+%Base case:
+makingSets(_,[],[]).
+makingSets(X,[H|T],[[X,H] | RestPairs]):-
+    makingSets(X,T,RestPairs).
+
+
+
+%Base case:
+mainSets([],[]).
+mainSets([H|T], AllSets):-
+    makingSets(H, T, Pairs),
+    mainSets(T, RestSets),
+    union(Pairs, RestSets, AllSets).
+
+% ------------------------------------------------------------------------
+
+
+
+% 6.
+% a. Write a predicate to test if a list is a set.
+% b. Write a predicate to remove the first three occurrences of an element in a list.
+% If the element occurs less than three times, all occurrences will be removed.
+
+
+%a
+count_o([],_,0).
+count_o([H|T], E, R1):-
+    H =:= E,
+    count_o(T,E,R),
+    R1 is R +1.
+count_o([H|T], E, R):-
+    H =\= E,
+    count_o(T, E, R).
+
+test_set([]).
+test_set([H|T]):-
+    count_o([H|T], H, Res),
+    Res =:= 1,
+    test_set(T), !.
+
+
+
+%b
+% b. Write a predicate to remove the first three occurrences of an element in a list.
+
+
+remove_k_occurences([], _, _, []) :- !.
+remove_k_occurences(L, _, 0, L) :- !.
+remove_k_occurences([H|T], E, K, R) :- H =:= E,
+    K1 is K - 1,
+    remove_k_occurences(T, E, K1, R).
+remove_k_occurences([H|T], E, K, [H|R]) :- H =\= E,
+     remove_k_occurences(T, E, K, R).
+
+% remove_3_occurences(L:list, E:number, R:list)
+% remove_3_occurences(i, i, o)
+
+remove_3_occurences(L, E, R) :- remove_k_occurences(L, E, 3, R).
+
+
+% ------------------------------------------------------------------------
+% 7.
+% a. Write a predicate to compute the intersection of two sets.
+% b. Write a predicate to create a list (m, ..., n) of all integer numbers from the interval [m, n]
+
+%a
+
+containing([V|_], V).
+containing([_|T], E) :-containing(T,E).
+
+intersection([],_,[]).
+intersection(_,[],[]).
+intersection([H|T], List, [H|Res]):-
+    containing(List, H),
+    intersection(T, List, Res).
+intersection([_|T], List, Res):-intersection(T, List, Res).
+
+
+
+% b. Write a predicate to create a list (m, ..., n) of all integer numbers from the interval [m, n]
+
+new_list(N, N, [N]).
+new_list(M, N, [M|Res]):-
+    New_m is M+1,
+    new_list(New_m, N, Res).
+
+
+
+% ------------------------------------------------------------------------
+% 8.
+% a. Write a predicate to determine if a list has even numbers of elements
+% without counting the elements from the list.
+% b. Write a predicate to delete first occurrence of the minimum number from a list.
+
+%a
+even_list([]).
+even_list([_, _ |T]):-even_list(T).
+
+
+%b
+%% b. Write a predicate to delete first occurrence of the minimum number from a list
+
+min_numbers(A, B, A):- A =<  B.
+min_numbers(A, B, B):- B<A.
+
+minim_list([H], H).
+minim_list([H|T], Res):-
+    minim_list(T, R),
+    min_numbers(H, R, Res).
+
+delete_first_occurence([H|T], H, T).
+delete_first_occurence([H|T], E, [H|R]):-delete_first_occurence(T, E, R).
+
+
+delete_first_min(L, R):-
+    minim_list(L, Min),
+    delete_first_occurence(L, Min, R).
+
+
+
+% ------------------------------------------------------------------------
+
+% a. Insert an element on the position n in a list.
+% b. Define a predicate to determine the greatest common divisor of all numbers from a list
+
+
+%a
+
+insert_on_n(L, E, 0, [E|L]).
+insert_on_n([H|T], E, N, [H|Rest] ):-
+    N2 is N-1,
+    insert_on_n(T, E, N2, Rest).
+
+
+% b. Define a predicate to determine the greatest common divisor of all numbers from a list
+
+gcd1(0,B,B).
+gcd1(A,0,A).
+gcd1(A,B,R):- A>=B,
+    A1 is B mod A,
+    gcd1(A1,B,R).
+gcd1(A,B,R):-A<B,
+    B1 is B mod A,
+    gcd1(A,B1,R).
+
+gcd([],[]).
+gcd1_list([H],H).
+gcd1_list([H|T], R):-
+    gcd1_list(T,R1),
+    gcd1(H,R1,R).
+
+
+%-----------------------------------------------------------------------
+% 10.
+% a. Define a predicate to test if a list of an integer elements has a "valley" aspect (a set has a "valley" aspect if
+% elements decreases up to a certain point, and then increases.
+% eg: 10 8 6 9 11 13 – has a “valley” aspect
+% b. Calculate the alternate sum of list’s elements (l1 - l2 + l3 ...).
+
+                                                                                  %a
+valley([_],0).
+valley([H1, H2|T], 1):-
+    H1 > H2,
+    valley([H2|T],1),!.
+
+valley([H1, H2|T], _)
+       :- H1 < H2,
+       valley([H2|T], 0),!.
+
+mountain([_],0).
+mountain([H1, H2|T], 1):-
+    H1 < H2,
+    mountain([H2|T],1),!.
+
+mountain([H1, H2|T], _)
+       :- H1 > H2,
+       mountain([H2|T], 0),!.
+
+
+
+%b Calculate the alternate sum of list’s elements (l1 - l2 + l3 ...).
+alternative_sum([],0).
+alternative_sum([E],E).
+alternative_sum([H1, H2|T],R):-
+    alternative_sum(T,R1),
+    R is H1-H2 + R1.
+
+
+
+
+% ------------------------------------------------------------------------
+
+% 11.
+% a. Write a predicate to substitute an element from a list with another element in the list.
+% b. Write a predicate to create the sublist (lm, …, ln) from the list (l1,…, lk).
+
+
+%a
+substitute_elem([],_,_,[]).
+substitute_elem([H|T],E1, E2, [E2|R]):- H =:= E1,
+    substitute_elem(T, E1, E2, R).
+substitute_elem([H|T], E1, E2, [H|R]):-H=\=E1,
+    substitute_elem(T, E1, E2, R).
+
+
+% b. Write a predicate to create the sublist (lm, …, ln) from the list (l1,…, lk).
+sub_list(_,_,N, Pos,[]):-Pos > N.
+sub_list([H|T], M, N, Pos, [H|R]):- M =< Pos, N >= Pos,
+    New_pos is Pos+1,
+    sub_list(T, M, N, New_pos, R).
+sub_list([_|T], M, N, Pos, R):-
+    New_pos is Pos+1,
+    sub_list(T, M, N, New_pos, R).
+
+
+
+%--------------------------------------------------------------------
+% 12.
+% a. Write a predicate to substitute in a list a value with all the elements of another list.
+% b. Remove the n-th element of a list
+
+
+%a.
+inserare([],L,L).
+inserare([H|T], L, [H|R]):-inserare(T,L,R).
+
+substitute_elem1([],_,_,[]).
+substitute_elem1([H|T], E, List, R):-
+    H =:= E,
+    inserare(List,T,R1),
+    substitute_elem1(R1,E,List,R).
+substitute_elem1([H|T],E,List,[H|R]):-
+    H =\= E,
+    substitute_elem1(T,E,List, R).
+
+
+% b. Remove the n-th element of a list
+
+remove_nth([],_,[]).
+remove_nth([_|T],1,T).
+remove_nth([H|T], N, [H|R]):-
+    New_n is N-1,
+    remove_nth(T, New_n, R).
+
+
+
+% -----------------------------------------------------------------------% 13.
+% a. Transform a list in a set, in the order of the last occurrences of elements.
+% Eg.: [1,2,3,1,2] is transformed in [3,1,2].
+% b. Define a predicate to determine the greatest common divisor of all numbers in a list
+
+
+%a
+
+count_occur([],_,0).
+count_occur([H|T],E,R):-
+    H =:= E,
+    count_occur(T,E,R1),
+    R is R1+1.
+count_occur([H|T], E, R):-
+    H =\= E,
+    count_occur(T, E, R).
+
+
+
+list_to_set([],[]).
+list_to_set([H|T], [H|R]):-
+    count_occur(T, H, R1),
+    R1 =:= 0,
+    list_to_set(T,R).
+list_to_set([H|T], R):-
+    count_occur(T, H, R1),
+    R1 > 0,
+    list_to_set(T,R).
+
+
+% b. Define a predicate to determine the greatest common divisor of all numbers in a list
+
+gcd2(A,0,A).
+gcd2(0,B,B).
+gcd2(A,B,R):-A >= B,
+    A1 is A mod B,
+    gcd2(A1, B, R).
+gcd2(A,B,R):-A<B,
+    B1 is B mod A,
+    gcd2(A,B1,R).
+
+
+gcd_list1([H],H).
+gcd_list1([H|T], R):-
+    gcd_list1(T, R1),
+    gcd2(H, R1, R).
+
+
+%---------------------------------------------------------------------
+% 14.
+% a. Write a predicate to test equality of two sets without using the set difference.
+% b. Write a predicate to select the n-th element of a given list.
+
+%a
+
+list_length([],0).
+list_length([_|T], C):-
+    list_length(T, C1),
+    C is C1+1.
+
+contains_elem([V|_],V).
+contains_elem([_|T], E):- contains_elem(T, E).
+
+remove_occure([],_,[]).
+remove_occure([H|T],E,R):-
+    H=:= E,
+    remove_occure(T,E,R).
+remove_occure([H|T], E, [H|R]):-
+    H =\= E,
+    remove_occure(T,E,R).
+
+
+are_sets_equal([],[]).
+are_sets_equal([HA|TA],[HB|TB]):-
+    list_length(TA, CA),
+    list_length(TB, CB),
+    CA =:= CB,
+    contains([HB|TB],HA),
+    contains([HA|TA],HB),
+    remove_occure(TB, HA, RA),
+    remove_occure(TA, HB, RB),
+    are_sets_equal(RA, RB).
+
+
+% ------------------------------------------------------------------------
+% 15.
+% a. Write a predicate to transform a list in a set, considering the first occurrence.
+% Eg: [1,2,3,1,2] is transform in [1,2,3].
+% b. Write a predicate to decompose a list in a list respecting the following:
+% [list of even numbers list of odd numbers] and also return the number of even numbers and the numbers of odd numbers.
+
+
+%a
+
+remove_occ2([],_,[]).
+remove_occ2([H|T], E, R):-
+    H =:= E,
+    remove_occ2(T, E, R).
+remove_occ2([H|T], E, [H|R]):-
+    H =\= E,
+    remove_occ2(T, E, R).
+
+list_to_set2([],[]).
+list_to_set2([H|T],[H|R]):-
+    remove_occ2(T, H, R1),
+    list_to_set2(R1, R).
+
+
+%b. Write a predicate to decompose a list in a list respecting the following:
+% [list of even numbers list of odd numbers] and also return the number of even numbers and the numbers of odd numbers.
+
+
+decompose([],[0,0,[],[]]).
+decompose([H|T],[H1f, H2, [H|H3], H4]):-
+    H mod 2 =:= 0,
+    decompose(T, [H1, H2, H3, H4]),
+    H1f is H1 +1.
+decompose([H|T], [H1, H2f, H3, [H|H4]]):-
+    H mod 2 =:= 1,
+    decompose(T, [H1, H2, H3, H4]),
+    H2f is H2+1.
+
+
+% ------------------------------------------------------------------------
+% -----------------------------------------------------------------------
+% -----------------------------------------------------------------------
+% ----------------------------------------------------------------
+% 1.
+% a. Sort a list with removing the double values. E.g.: [4 2 6 2 3 4] --> [2 3 4 6]
+contains2([E|_], E).
+contains2([_|T], E):-contains(T,E).
+
+remove_duplicates([],[]).
+remove_duplicates([H|T], [H|R]):-
+    not(contains2(T, H)),
+    remove_duplicates(T, R).
+remove_duplicates([H|T], R):-
+    contains2(T, H),
+    remove_duplicates(T, R).
+
+
+bubble_sort(List,Sorted):-b_sort(List,[],Sorted).
+b_sort([],Acc,Acc).
+b_sort([H|T],Acc,Sorted):-bubble(H,T,NT,Max),b_sort(NT,[Max|Acc],Sorted).
+
+bubble(X,[],[],X).
+bubble(X,[Y|T],[Y|NT],Max):-X>Y,bubble(X,T,NT,Max).
+bubble(X,[Y|T],[X|NT],Max):-X=<Y,bubble(Y,T,NT,Max).
+
+sort_without_duplicates(L, R):-
+    remove_duplicates(L, R1),
+    bubble_sort(R1, R).
+
+
+
+% ------------------------------------------------------------------------
+% 2.
+% a. Sort a list with keeping double values in resulted list.
+% E.g.: [4 2 6 2 3 4] --> [2 2 3 4 4 6]
+
+%bubble_sort ul de mai sus
+
+
+% ------------------------------------------------------------------------
+
+
+% 3.
+% a. Merge two sorted lists with removing the double values.
+
+merge_lists(L,[],L).
+merge_lists([],L,L).
+merge_lists([H1|T1], [H2|T2], [H1|R]):-
+    H1 < H2,
+    merge_lists(T1, [H2|T2], R).
+merge_lists([H1|T1], [H2|T2], [H2|R]):-
+    H2 < H1,
+    merge_lists([H1|T1], T2, R).
+merge_lists([H1|T1], [H2|T2], R):-
+    H1 =:= H2,
+    merge_lists(T1, T2, R).
+
+% ------------------------------------------------------------------------
+
+% 4.
+% a. Write a predicate to determine the sum of two numbers written in list representation.
+
+
+list_to_number_reversed([],0).
+list_to_number_reversed([H|T], Nr):-
+       list_to_number_reversed(T, RestNr),
+       Nr is  H + RestNr*10.
+
+append_at_the_end([],E,[E]).
+append_at_the_end([H|T], E, [H|R]):-
+    append_at_the_end(T, E, R).
+
+reverse_list([],[]).
+reverse_list([H|T], R):-
+    reverse_list(T,R1),
+    append_at_the_end(R1, H, R).
+
+sum_of_two_list_numbers([],[],0).
+sum_of_two_list_numbers(L1, L2, R):-
+    reverse_list(L1, L1R),
+    reverse_list(L2, L2R),
+    list_to_number_reversed(L1R, Nr1),
+    list_to_number_reversed(L2R, Nr2),
+    R is Nr1 + Nr2.
+
+
+
+list_to_number_main(Lst, Nr):-
+    list_to_number(Lst, 0, Nr).
+
+list_to_number([],Res,Res).
+list_to_number([H|T], Current, R):-
+    Current2 is Current * 10 + H,
+    list_to_number(T, Current2, R).
+
+number_to_list(Nr, L):- number_to_list_helper(Nr, [], L).
+
+number_to_list_helper(0,L,L).
+number_to_list_helper(Nr, L, Res):-
+    Nr1 is Nr mod 10,
+    Nr0 is Nr div 10,
+    number_to_list_helper(Nr0, [Nr1|L], Res).
+
+
+
+
+
+
+
+% ------------------------------------------------------------------------
+% 5.
+% a. Substitute all occurrences of an element of a list with all the elements of another list.
+% Eg. subst([1,2,1,3,1,4],1,[10,11],X) produces X=[10,11,2,10,11,3,10,11,4].
+
+insert_at_the_end1([],L,L).
+insert_at_the_end1([H|T], L, [H|R]):-insert_at_the_end1(T, L, R).
+
+subs_el_with_list([],_,_,[]).
+
+subs_el_with_list([H|T], E, L, R):-
+    H =:= E,
+    subs_el_with_list(T, E, L, R1),
+    insert_at_the_end1(L,R1, R).
+
+subs_el_with_list([H|T], E, L, [H|R]):-
+    E =\= H,
+    subs_el_with_list(T,E,L,R).
+
+% ------------------------------------------------------------------------
+
+% 6.
+% a. Determine the product of a number represented as digits in a list to a given digit.
+% Eg.: [1 9 3 5 9 9] * 2 => [3 8 7 1 9 8]
+
+list_to_number2(L,Nr):-list_to_number_helper(L,0,Nr).
+
+list_to_number_helper([],Res,Res).
+list_to_number_helper([H|T],Nr,R):-
+    Nr2 is Nr * 10 + H,
+    list_to_number(T, Nr2, R).
+
+number_to_list2(Nr, R):-number_to_list_helper2(Nr, [], R).
+
+number_to_list_helper2(0, Res, Res).
+number_to_list_helper2(Nr, Lst, Res):-
+    Nr0 is Nr div 10,
+    Nr1 is Nr mod 10,
+    number_to_list_helper2(Nr0, [Nr1|Lst], Res).
+
+product_number(Lst, Nr, Res):-
+    list_to_number2(Lst, Number),
+    NewNumber is Number * Nr,
+    number_to_list2(NewNumber, Res).
+
+
+% ------------------------------------------------------------------------
+% 7.
+% a. Determine the position of the maximal element of a linear list.
+% Eg.: maxpos([10,14,12,13,14], L) produces L = [2,5].
+
+maxi_of_a_list([H|T],Res):-maxi_helper([H|T], H, Res).
+
+maxi_helper([], Maxi, Maxi).
+maxi_helper([H|T], CurrentMaxi, Maxi):-
+    H > CurrentMaxi,
+    CurrentMaxi2 is H,
+    maxi_helper(T, CurrentMaxi2, Maxi).
+maxi_helper([H|T], CurrentMaxi, Maxi):-
+    H =<  CurrentMaxi,
+    maxi_helper(T, CurrentMaxi, Maxi).
+
+
+determine_pos(L,E,R):-determine_pos_helper(L,E,1,[],R).
+determine_pos_helper([],_,_,Current,Current).
+determine_pos_helper([H|T], E, Pos,Current, R):-
+    H =:= E,
+    New_pos is Pos +1,
+    determine_pos_helper(T, E, New_pos, [Pos| Current], R).
+determine_pos_helper([H|T], E, Pos, Current, R):-
+    H =\= E,
+    New_pos is Pos+1,
+    determine_pos_helper(T, E, New_pos, Current, R).
+
+
+append_at_the_end2([],E,[E]).
+append_at_the_end2([H|T],E, [H|Res]):-append_at_the_end2(T, E, Res).
+
+reverse_list2([],[]).
+reverse_list2([H|T], R):-
+    reverse_list2(T, R1),
+    append_at_the_end2(R1, H, R).
+
+pos_of_maxi(Lst, Res):-
+    maxi_of_a_list(Lst, Maxi),
+    determine_pos(Lst, Maxi, PosReversed),
+    reverse_list2(PosReversed, Res).
+
+
+
+% ------------------------------------------------------------------------
+% 8.
+% a. Determine the successor of a number represented as digits in a list.
+% Eg.: [1 9 3 5 9 9] --> [1 9 3 6 0 0]
+
+
+
+list_to_number3(Lst, Res):-list_to_number_helper3(Lst, 0, Res).
+
+list_to_number_helper3([], Res, Res).
+list_to_number_helper3([H|T], Current, Res):-
+    Current2 is Current * 10 + H,
+    list_to_number_helper3(T, Current2, Res).
+
+number_to_list3(Nr, Res):-number_to_list_helper3(Nr, [], Res).
+number_to_list_helper3(0, Res, Res).
+number_to_list_helper3(Nr, Current, Res):-
+    Nr0 is Nr div 10,
+    Nr1 is Nr mod 10,
+    number_to_list_helper3(Nr0, [Nr1 | Current], Res).
+
+successor(Lst, Res):-
+    list_to_number3(Lst, Nr),
+    Nr2 is Nr +1,
+    number_to_list3(Nr2, Res).
+
+
+% ------------------------------------------------------------------------
+% 9.
+% a. For a list of integer number, write a predicate to add in list after
+% 1-st, 3-rd, 7-th, 15-th element a given value e.
+
+
+insert_at_odd_pos(Lst, E, Res):-insert_at_pos_odd(Lst, E, 1, Res).
+insert_at_pos_odd([],_,_,[]).
+insert_at_pos_odd([H|T], E, Pos, [E, H|R]):-
+    Pos mod 2 =:= 1,
+    New_pos is Pos+1,
+    insert_at_pos_odd(T, E, New_pos, R).
+insert_at_pos_odd([H|T],E,Pos,[H|Rest]):-
+    NewPos is Pos+1,
+    insert_at_pos_odd(T,E,NewPos, Rest).
+
+%--------------------------------------------------------------------
+% 10.
+% a. For a list of integer numbers, define a predicate to write twice in list every prime number.
+
+nrPrim(Nr):-Nr>1, nrPrim_helper(Nr, 3).
+
+nrPrim_helper(Nr, Div) :-
+    Nr mod Div =\= 0,
+    Div * Div > Nr, !.
+nrPrim_helper(Nr, Div) :-
+    Nr mod Div =\= 0,
+    NewDiv is Div + 2,
+    nrPrim_helper(Nr, NewDiv).
+
+%apelam cu nrPrim(something, 3)
+
+insert_after_prime([],[]).
+insert_after_prime([H|T], [H, H|R]):-
+    nrPrim(H),
+    insert_after_prime(T,R).
+insert_after_prime([H|T], [H|R]):-
+    not(nrPrim(H)),
+    insert_after_prime(T, R).
+
+
+% ------------------------------------------------------------------------
+% 12.
+% a. Define a predicate to add after every element from a list, the divisors of that number.
+
+divisors_of_number(Nr, Res):-divisors_of_number_helper(Nr, 1, [], Res).
+divisors_of_number_helper(Nr, Div, Res, Res):-
+    Div =:= Nr +1, !.
+divisors_of_number_helper(Nr, Div, Res, R):-
+    Nr mod Div =:= 0,
+    NewDiv is Div + 1,
+    divisors_of_number_helper(Nr, NewDiv, [Div|Res], R).
+divisors_of_number_helper(Nr, Div, Res, R):-
+    Nr mod Div =\= 0,
+    NewDiv is Div + 1,
+    divisors_of_number_helper(Nr, NewDiv, Res, R).
+
+append_at_the_end4([],Nr,[Nr]).
+append_at_the_end4([H|T], Nr,[H| R]):-
+    append_at_the_end4(T, Nr, R).
+
+reverse_list4([],[]).
+reverse_list4([H|T], Res):-
+    reverse_list4(T, R1),
+    append_at_the_end4(R1, H, Res).
+
+add_after_el_list([],[]).
+add_after_el_list([H|T], Res):-
+    divisors_of_number(H, Divs),
+    reverse_list4(Divs, Divs2),
+    add_after_el_list(T, Rest),
+    Res = [H, Divs2 | Rest].
+
+% ------------------------------------------------------------------------
+% 13.
+% a. Given a linear numerical list write a predicate to remove all sequences of consecutive values.
+% Eg.: remove([1, 2, 4, 6, 7, 8, 10], L) will produce L=[4, 10].
+
+removeConsecutive([],[]).
+removeConsecutive([E],[E]).
+removeConsecutive([H1, H2], []):-H2 =:= H1+1.
+removeConsecutive([H1,H2],[H1,H2]):-H2 =\= H1 +1.
+removeConsecutive([H1, H2, H3|T], R):-
+    H2 =:= H1+1,
+    H3 =:= H2+1,
+    removeConsecutive(T, R).
+removeConsecutive([H1, H2, H3|T], R):-
+    H2 =:= H1+1,
+    H3 =\= H2+1,
+    removeConsecutive([H3|T], R).
+removeConsecutive([H1, H2, H3|T], [H1|R]):-
+    H2 =\= H1+1,
+    removeConsecutive([H2,H3|T],R).
+
+
+
+remConsecutive([], []).
+remConsecutive([E], [E]).
+remConsecutive([H1, H2], []) :- H2 =:= H1 + 1.
+remConsecutive([H1, H2], [H1, H2]) :- H2 =\= H1 + 1.
+remConsecutive([H1, H2|T], [H1|R]):-
+    H2 =\= H1+1,
+    remConsecutive([H2|T], R).
+remConsecutive([H1, H2|T], R):-
+    H2 =:= H1+1,
+    remConsecutive(T,R).
+
+
+
+
+even(N) :- N mod 2 =:= 0.
+
+% Model matematic:
+% my_append(l1...ln, e) =
+%	[e], n = 0
+%	l1 + my_append(l2...ln), otherwise
+
+% my_append(L:list, E:number, R:list)
+% flow model: my_append(i, i, o)
+
+my_append([], E, [E]).
+my_append([H|T], E, [H|R]) :-
+    my_append(T, E, R).
+
+% Model matematic:
+% my_length(l1...ln) =
+%	0, n = 0
+%	1 + my_length(l2...ln), otherwise
+
+% my_length(L:list, R:number)
+% flow model: my_length(i, o)
+
+my_length([], 0).
+my_length([_|T], R) :-
+    my_length(T, RC),
+    R is RC + 1.
+
+% Model matematic
+% consecutive(l1...ln, c1...cm, r1...rl) =
+%	r1...rl, n = 0, l > m
+%	c1...cm, n = 0, l < m
+%	consecutive(l2...ln, c1...cm, l1 + r1...rl), even(l1) = true
+%	consecutive(l2...ln, r1...rl, []) even(l1) = false and l > m
+%	consecutive(l2...ln, c1...cm, []) even(l1) = false and l < m
+
+% consecutive(L:list, C:list, AUX: list, R:list)
+% consecutive(i, i, i, o)
+
+consecutive([], C, AUX, C) :-
+    my_length(C, RC),
+    my_length(AUX, RAUX),
+    RC >= RAUX.
+consecutive([], C, AUX, AUX) :-
+    my_length(C, RC),
+    my_length(AUX, RAUX),
+    RC < RAUX.
+consecutive([H|T], C, AUX, R) :- even(H),
+    my_append(AUX, H, RA),
+    consecutive(T, C, RA, R).
+consecutive([_|T], C, AUX, R) :-
+    my_length(C, RC),
+    my_length(AUX, RAUX),
+    RAUX >= RC,
+    consecutive(T, AUX, [], R).
+consecutive([_|T], C, AUX, R) :-
+    my_length(C, RC),
+    my_length(AUX, RAUX),
+    RAUX < RC,
+    consecutive(T, C, [], R).
+
+
+
+
+
+
+%---------------------------------------------------------------------
+% 15.
+% a. Define a predicate to determine the predecessor of a number represented as digits in a list.
+% Eg.: [1 9 3 6 0 0] => [1 9 3 5 9 9]
+
+list_to_number5(Lst,Res):-list_to_number_helper5(Lst, 0, Res).
+list_to_number_helper5([],Nr,Nr).
+list_to_number_helper5([H|T], Nr, Res):-
+    Nr2 is Nr*10 + H,
+    list_to_number(T, Nr2, Res).
+
+
+number_to_list5(Nr, Res):-number_to_list_helper5(Nr, [], Res).
+number_to_list_helper5(0,Res,Res).
+number_to_list_helper5(Nr, Current, R):-
+    Nr0 is Nr div 10,
+    Nr1 is Nr mod 10,
+    number_to_list_helper5(Nr0, [Nr1 | Current], R).
+
+predecessor_list(L,Res):-
+    list_to_number5(L, Nr),
+    Nr2 is Nr -1,
+    number_to_list5(Nr2, Res).
+
+
+% ------------------------------------------------------------------------
+%Sum of proper divisors
+
+% sumOfDivMain(N, S) (i, o)
+sumOfDivMain(N, S):-sumOfDiv(N, 2, S).
+
+% sumOfDiv(N, D, S) (i, i, o)
+% sumOfDiv(N, D) = 0, N > D/2
+%                = D + sumOfDiv(N, D+1), if N % D == 0
+%                = sumOfDiv(N, D+1), otherwise
+sumOfDiv(N, D, S):- D > N div 2, S is 0.
+sumOfDiv(N, D, S):- D =< N div 2,
+    N mod D =:= 0,
+    D1 is D+1,
+    sumOfDiv(N, D1, S1),
+    S is D + S1.
+sumOfDiv(N, D, S):- D =< N div 2,
+    N mod D =\= 0,
+    D1 is D+1,
+    sumOfDiv(N, D1, S).
+
+
+% ------------------------------------------------------------------------
+%Insert element at position
+% addElemOnPos(L, E, Pos, Res) (i, i, i, o)
+
+% addElemOnPos(l1...ln, E, Pos) = [], if n == 0 and Pos > 1
+%                               = E U l1...ln, Pos == 1
+%                               = l1 U addElemOnPos(l2...ln, E, Pos - 1), otherwise
+addElemOnPos([], _, M, []):-M>1.
+addElemOnPos([H|T], E, 1, [E,H|T]).
+addElemOnPos([H|T], E, M, [H|T1]):-M>1, M1 is M - 1, addElemOnPos(T, E, M1, T1).
+
+
+% ------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
