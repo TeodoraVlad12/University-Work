@@ -1,0 +1,70 @@
+%Two integers, n and m are given. Write a predicate to determine all
+% possible sequences of numbers
+% from 1 to n, such that between any two numbers from consecutive
+% positions, the absolute difference
+%to be >= m.
+
+
+%Computing the absolute difference
+% diff(a, b) =
+%	b - a, a < b
+%	a - b, a > b
+
+
+
+diff(A, B, R) :-A < B, R is B-A.
+diff(A, B, R) :-B < A, R is A-B.
+
+
+% sequences(n, i) =
+%	[], i = n + 1
+%	i + sequences(n, i + 1), i <= n
+%	sequences(n, i + 1), i > n
+
+
+
+%Base case:
+sequences(N, I, []):-I =:= N+1, !.
+
+%When we want to add the current element to the sequence:
+sequences(N, I, [I|R]) :-
+    I =< N,
+    N1 is I+1,
+    sequences(N, N1, R).
+
+%When we want to skip the current element:
+sequences(N, I, R) :-
+    I =< N,
+    N1 is I+1,
+    sequences(N, N1, R).
+
+
+
+
+% check(l1...ln, m) =
+%	true, diff(l1, l2) >= m and n = 2
+%	check(l2...ln, m), diff(l1, l2) >= m and n > 2
+%	false, otherwise
+
+
+
+%The case in which the list has only two elements
+check([H1, H2], M) :-
+    diff(H1, H2, Rez),
+    Rez >=  M, !.
+
+%Rest of the cases:
+check([H1, H2| T], M) :-
+    diff(H1, H2, Rez),
+    Rez >= M,
+    check([H2 | T], M).
+
+
+
+onesolution(N, M, R) :-
+    sequences(N, 1, R),
+    check(R, M).
+
+
+all(N, M, R) :-
+    findall(RPartial, onesolution(N, M, RPartial), R).
