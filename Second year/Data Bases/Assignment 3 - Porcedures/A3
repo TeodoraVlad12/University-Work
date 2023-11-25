@@ -1,0 +1,314 @@
+use AnimalShelter;
+GO
+
+----------------------------------------------------------A------------------------------------------------------------------------
+--- modify the type of a column
+
+
+CREATE PROCEDURE SetEmployeeSalaryFloat
+AS
+	ALTER TABLE Employee
+	ALTER COLUMN EmployeeSalary FLOAT
+GO 
+
+
+CREATE PROCEDURE SetEmployeeSalaryBackInt
+AS
+	ALTER TABLE Employee
+	ALTER COLUMN EmployeeSalary INT
+GO
+
+
+EXEC SetEmployeeSalaryFloat
+EXEC SetEmployeeSalaryBackInt
+SELECT * FROM Employee
+GO
+
+
+
+---------------------------------------------------------------B------------------------------------------------------------------
+---add/ remove a column
+
+CREATE PROCEDURE AddBonusEmployee
+AS
+	ALTER TABLE Employee
+	ADD BonusMoney INT
+GO
+
+CREATE PROCEDURE RemoveBonusEmployee
+AS
+	ALTER TABLE Employee
+	DROP COLUMN BonusMoney
+GO
+
+EXEC AddBonusEmployee
+SELECT * FROM Employee
+EXEC RemoveBonusEmployee
+GO
+
+
+
+----------------------------------------------------------------C---------------------------------------------------------------------------------
+---add/ remove a DEFAULT constraint
+
+CREATE PROCEDURE AddDefaultSalary
+AS
+	ALTER TABLE Employee
+	ADD CONSTRAINT DefaultSalaryConstraint DEFAULT (3000) FOR EmployeeSalary
+GO
+
+
+CREATE PROCEDURE RemoveDefaultSalary
+AS
+	ALTER TABLE Employee
+	DROP CONSTRAINT DefaultSalaryConstraint
+GO
+
+EXEC AddDefaultSalary;
+INSERT INTO Employee(EmployeeID, EmployeeSpecialization) VALUES (15, 'feeder');
+DELETE FROM Employee WHERE EmployeeID = 15;
+SELECT * FROM Employee
+EXEC RemoveDefaultSalary
+GO
+
+
+-------------------------------------------------------------G--------------------------------------------------------------------------------------
+------create/ drop a table
+
+CREATE PROCEDURE CreateAnimalVisit
+AS
+	CREATE TABLE AnimalVisit
+	(
+	  PersonCNP varchar(13) NOT NULL,
+	  AnimalID INT NOT NULL,
+	  HappinessLevel INT,
+	  DateOfVisit DATE NOT NULL,
+	  CONSTRAINT PK_PersonCNP  PRIMARY KEY(PersonCNP)
+	)
+GO
+
+CREATE PROCEDURE DropAnimalVisit
+AS
+	DROP TABLE AnimalVisit
+GO
+
+EXEC CreateAnimalVisit
+EXEC DropAnimalVisit
+GO
+
+
+
+----------------------------------------------------------------D----------------------------------------------------------------------------------------------
+--- add/ remove a primary key
+
+CREATE PROCEDURE AddPrimaryKeyAnimalVisit
+AS
+	ALTER TABLE AnimalVisit DROP CONSTRAINT PK_PersonCNP 
+	ALTER TABLE AnimalVisit ADD CONSTRAINT PK_PersonAnimal PRIMARY KEY (PersonCNP, AnimalID, DateOfVisit)
+GO
+
+
+CREATE PROCEDURE RemovePrimaryKeyAnimalVisit
+AS
+	ALTER TABLE AnimalVisit DROP CONSTRAINT PK_PersonAnimal
+	ALTER TABLE AnimalVisit ADD CONSTRAINT PK_PersonCNP PRIMARY KEY (PersonCNP)
+GO
+
+EXEC AddPrimaryKeyAnimalVisit
+EXEC RemovePrimaryKeyAnimalVisit
+GO
+
+
+
+-----------------------------------------------------------------E------------------------------------------------------------------------------------
+---add/ remove a candidate key
+
+CREATE PROCEDURE AddAnimalIDCandidateKeyAnimalVisit
+AS
+    ALTER TABLE AnimalVisit ADD CONSTRAINT AnimalIDCandidateKey UNIQUE (AnimalID)
+GO
+
+
+CREATE PROCEDURE RemoveAnimalIDCandidateKeyAnimalVisit
+AS
+    ALTER TABLE AnimalVisit DROP CONSTRAINT AnimalIDCandidateKey
+GO
+
+
+EXEC AddAnimalIDCandidateKeyAnimalVisit
+EXEC RemoveAnimalIDCandidateKeyAnimalVisit
+GO
+
+
+
+-------------------------------------------------------------------F-------------------------------------------------------------------------------
+---add/ remove a foreign key
+
+CREATE PROCEDURE AddForeignKeyAnimalVisit
+AS
+	ALTER TABLE AnimalVisit
+	ADD CONSTRAINT FK_AnimalID FOREIGN KEY (AnimalID) REFERENCES Animal(AnimalID)
+GO
+
+
+CREATE PROCEDURE RemoveForeignKeyAnimalVisit
+AS
+	ALTER TABLE AnimalVisit
+	DROP CONSTRAINT FK_AnimalID
+GO
+
+EXEC AddForeignKeyAnimalVisit
+EXEC RemoveForeignKeyAnimalVisit
+GO
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE VersionHistory
+(
+    VERSION INT
+)
+INSERT INTO VersionHistory VALUES (0) -- first version
+
+
+
+CREATE TABLE ProcedureTable
+(
+    UndoProcedure VARCHAR(100),
+    RedoProcedure VARCHAR(100),
+    Version       INT PRIMARY KEY
+)
+GO
+
+
+CREATE PROCEDURE GoToVersion (@InputVersion INT)
+AS
+
+DECLARE @currentVersion INT;
+SET @currentVersion = (SELECT TOP 1 VERSION FROM VersionHistory);
+
+DECLARE @currentStatement CHAR(100);
+DECLARE @procedure NVARCHAR(100);
+DECLARE @var2 INT
+DECLARE @maximumVersion INT;
+SET @maximumVersion = (SELECT TOP 1 VERSION FROM ProcedureTable ORDER BY VERSION DESC)
+
+
+if @InputVersion = @currentVersion
+	BEGIN
+		print 'You already are at this version! -> ' + convert(varchar(10), @currentVersion)
+		return
+	END
+
+if @InputVersion < 0
+	BEGIN
+		print 'Incorrect input version! You cannot select a version less than 0:(('
+		return
+	END
+
+if @InputVersion > @maximumVersion
+	BEGIN
+		print 'Incorrect input version! You cannot select a version that is greater than the maximum version:/'
+		return
+	END
+
+print 'From current version being ' + convert(varchar(10), @currentVersion) + ' to wanted version being ' + convert(varchar(10), @InputVersion)
+
+WHILE @currentVersion != @InputVersion
+BEGIN
+	if @currentVersion > @inputVersion    --we need undo
+	BEGIN
+		DECLARE UndoCursor CURSOR FOR SELECT UndoProcedure FROM ProcedureTable
+		OPEN UndoCursor
+
+		SELECT @var2 = 0
+
+		WHILE @var2 != @currentVersion
+		BEGIN
+			FETCH FROM UndoCursor INTO @currentStatement
+			SELECT @var2 = @var2 + 1
+		END
+
+		BEGIN
+			SET @procedure = 'exec ' + @currentStatement
+			print 'The procedure was: ' + @procedure + 'to reach version: ' + convert(varchar(10), @currentVersion -1)
+	
+
+			EXEC sp_executesql @procedure
+			UPDATE VersionHistory
+			SET VERSION = VERSION -1
+			SET @currentVersion = @currentVersion - 1
+		END
+		CLOSE UndoCursor
+		DEALLOCATE UndoCursor
+	END
+
+
+else    --we need redo
+BEGIN
+	DECLARE RedoCursor CURSOR FOR SELECT PT.RedoProcedure FROM ProcedureTable PT
+	OPEN RedoCursor
+		SELECT @var2 = -1
+		WHILE @var2 != @currentVersion
+		BEGIN
+			FETCH FROM RedoCursor INTO @currentStatement
+			SELECT @var2 = @var2 + 1
+		END
+
+		BEGIN
+			SELECT @procedure = 'exec ' + @currentStatement
+			print 'The procedure was: ' + @procedure + ' to reach version: ' + convert(varchar(10), @currentVersion+1)
+			
+
+			exec sp_executesql @procedure
+			UPDATE VersionHistory
+			SET VERSION = VERSION +1
+			SET @currentVersion = @currentVersion + 1;
+		END
+	CLOSE RedoCursor
+	DEALLOCATE RedoCursor
+END
+END
+GO
+
+
+INSERT INTO ProcedureTable(UndoProcedure, RedoProcedure, Version)
+VALUES
+	   ('DropAnimalVisit', 'CreateAnimalVisit', 1),
+       ('RemoveBonusEmployee', 'AddBonusEmployee', 2),
+       ('SetEmployeeSalaryBackInt', 'SetEmployeeSalaryFloat', 3),
+       ('RemoveDefaultSalary', 'AddDefaultSalary', 4),
+       ('RemoveAnimalIDCandidateKeyAnimalVisit', 'AddAnimalIDCandidateKeyAnimalVisit', 5),
+       ('RemoveForeignKeyAnimalVisit', 'AddForeignKeyAnimalVisit', 6),
+       ('RemovePrimaryKeyAnimalVisit', 'AddPrimaryKeyAnimalVisit', 7)
+SELECT * FROM ProcedureTable
+SELECT * FROM VersionHistory
+
+EXECUTE GoToVersion @InputVersion = 0
+
+Go
+
+SELECT * FROM Employee
+
+
+
+
+
+
+
+	
+
+
+
+	
+
+
+
+
+
+
+
+
