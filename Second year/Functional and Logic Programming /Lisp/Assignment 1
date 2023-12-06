@@ -1,0 +1,143 @@
+; 5.
+; a) Write twice the n-th element of a linear list. Example: for (10 20 30 40 50) and n=3 will produce 
+; (10 20 30 30 40 50).
+
+
+;twice(l1l2l3...ln, n)= [], n==0
+                 ;   l1 + (l1l2...ln), n==1
+                ;  l1 + twice(l2l3....ln), otherwise
+
+(defun twice (l n)
+  (cond
+    ((null l) nil)
+    ((equal n 1) (cons (car l) l))
+    (T (cons (car l) (twice (cdr l) (- n 1))))
+  )
+)
+
+(print (twice '(1 2 3 4 5 6) 3))
+(print (twice nil 3))
+(print (twice '(1 2 3) 5 ))
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+; b) Write a function to return an association list with the two lists given as parameters.
+; Example: (A B C) (X Y Z) --> ((A.X) (B.Y) (C.Z)).
+
+
+;myAppend(l1l2...ln, k1k2...km) = k1k2..km, n==0
+                                ; l1 + myAppend(l2l3...ln, k1k2...km), otherwise
+
+
+(defun myAppend (l k)
+  (if (null l)
+    k
+    (cons (car l) (myAppend (cdr l) k))
+  )
+)
+
+;(setq l1 '(1 2 3))
+;(setq l2 '(4 5 6))
+;(print (myAppend l1 l2))
+
+
+
+;length(l1l2...ln) = 0, n==0
+                  ;  1 + length(l2l3..ln)
+                  
+                  
+(defun mylength (l)
+  (cond
+    ((null l) 0)
+    (t (+ 1 (mylength (cdr l))))
+  )
+)
+
+;(print (mylength '(1 2 3)))
+
+
+
+;association(l1l2...ln, k1k2...km)= [], n==0 and m===0
+                                  ; myAppend( (nil.k1), association(l1l2..ln, k2k3..km)), n==0
+                                  ; myAppend( (l1.nil), association(l2..ln, k1k2..km)), m==0
+                                  ; myAppend( (l1.k1), association(l2..ln, k2k3..km)), otherwise
+
+
+(defun association(l k)
+  (cond
+    ((and (null l) (null k))nil)
+    ((/= (mylength l) (mylength k)) nil)
+    ((null l) (myAppend (cons NIL (car k)) (association l (cdr k))))     ;here it works without list because the second elem is NIL
+    ((null k) (myAppend (cons (car l) NIL) (association (cdr l) k)))
+    (T (myAppend (list (cons (car l) (car k))) (association (cdr l) (cdr k))))
+  )
+)
+
+(print (association '(A B C D E) '(F G H I J)))
+(print (association '( A ) nil))
+(print (association nil nil))
+(print (association '(A) '(A B)))
+(print (association '(A) '(B)))
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+; c) Write a function to determine the number of all sublists of a given list, on any level.
+;  A sublist is either the list itself, or any element that is a list, at any level. Example:
+;  (1 2 (3 (4 5) (6 7)) 8 (9 10)) => 5 lists:
+;  (list itself, (3 ...), (4 5), (6 7), (9 10)).
+
+
+
+;countList(l1l2...ln) = 0, l not a list
+ ;                      1 + countList(l2l3...ln), otherwise
+
+
+
+(defun countList (l)
+    (cond
+        ((null l) 0)
+        ((listp  (car l)) (+ 1 (countList (car l)) (countList(cdr l))))
+        ((atom (car l)) (+ 0 (countList(cdr l))))
+    )
+)
+
+(defun countListMain (l)
+  (if (null l)
+      0
+      (+ 1 (countList l)))
+)
+
+(print (countListMain '(1 2 (3 (4 5) (6 7)) 8 (9 10))))
+(print (countListMain nil))
+(print (countListMain '(1)))
+(print (countListMain '( 1 2 (3) 4)))
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+; d) Write a function to return the number of all numerical atoms in a list at superficial level.
+
+;countNumbers(l1l2...ln)= 0, n==0
+			; 1 + countNumbers(l2l3...ln), l1 number
+                       ;  countNumbers(l2l3...ln), otherwise		
+
+
+
+(defun countNumbers (l)
+    (cond
+        ((null l) 0)
+        ((numberp (car l)) (+ 1 (countNumbers (cdr l))))
+        (T (countNumbers (cdr l)))
+    )
+)
+
+(print (countNumbers '(1 2 s 5 (6) fg 5)))
+(print (countNumbers nil))
+(print (countNumbers '( (1) (2) (3) )))
+(print (countNumbers '(f g h i j)))
+
+
+
