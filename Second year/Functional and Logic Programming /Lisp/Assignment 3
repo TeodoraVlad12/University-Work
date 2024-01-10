@@ -1,0 +1,34 @@
+;Write a function that computes the sum of even numbers and the decrease the sum of odd numbers, 
+;at any level of a list.
+
+;sum-even(l)= l, if l is number and l%2==0
+;             sum-even(l1) + sum_even(l2) + ... +sum-even(ln), if l is a list and l=(l1l2..ln),
+;             0, otherwise
+
+(defun sum-even (l)
+  (cond
+    ((numberp l)
+     (if (= 0 (mod l 2)) l 0))
+     (t(apply #'+ (mapcar #'sum-even l)))))
+
+(print (sum-even '(7 3 1 7 (5 7) 7)))
+
+
+;sum-odd(l)= l, if l is number and l%2==1
+;             sum-odd(l1) + sum_odd(l2) + ... +sum-odd(ln), if l is a list and l=(l1l2..ln),
+;            0, otherwise
+
+(defun sum-odd (l)
+  (cond
+    ((numberp l)
+     (if (= 1 (mod l 2)) l 0))
+     (t(apply #'+ (mapcar #'sum-odd l)))))
+
+(print (sum-odd '(7 3 1 7 (5 7) 7)))
+
+(defun main(l)
+(- (sum-even l) (sum-odd l)))
+
+(print (main '(2 4 5 (3 1 (5 6)))))
+(print (main '()))
+
