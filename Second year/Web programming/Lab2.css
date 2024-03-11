@@ -1,0 +1,44 @@
+body {
+    background-color: lightblue;
+}
+
+div.primul {
+    background-image: url('lara.jpeg');
+    height: 600px;
+    width: 600px;
+    margin: auto;
+    
+    transition: width 5s, height 5s, transform 5s;
+}
+
+div.primul:hover {
+    width: 300px;
+    height: 300px;
+    transform: rotateY(360deg);
+}
+
+.first {
+    background-color: red;
+    
+}
+
+.second {
+    background-color: blue;
+    
+}
+
+.third {
+    background-color: yellow;
+    
+}
+
+.forth {
+    background-color: green;
+    
+}
+
+.forth:hover, .third:hover, .second:hover, .first:hover {
+        background-color: pink; 
+}
+
+    
