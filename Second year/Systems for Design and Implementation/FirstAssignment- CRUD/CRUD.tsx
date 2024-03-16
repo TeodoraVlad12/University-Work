@@ -3,18 +3,18 @@ import { Dog } from '../model/Dog';
 import ModalUpdate from './ModalUpdate';
 import ModalAddDog from './ModalAddDog';
 import "./ModalUpdate.css";
+import "./CRUD.css"
 
 function CRUD() {
     const [dogs, setDogs] = useState<Dog[]>([
         new Dog(1, 'Buddy', 25.5, 3),
-        new Dog(2, 'Max', 30.0, 4),
-        new Dog(3, 'Charlie', 22.7, 2),
-        new Dog(4, 'Bella', 18.3, 5)
+
     ]);
 
     const [isModalOpenUpdate, setIsModalOpenUpdate] = useState<boolean>(false);
     const [isModalOpenAdd, setIsModalOpenAdd] = useState<boolean>(false);
     const [selectedDogIndex, setSelectedDogIndex] = useState<number | null>(null);
+    const [searchQuery, setSearchQuery] = useState<string>('');
 
     const handleUpdate = (index: number) => {
         setSelectedDogIndex(index);
@@ -64,18 +64,42 @@ function CRUD() {
         }
     };
 
+
+    const filteredDogs = dogs.filter(dog =>
+        dog.getName().toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <>
             <h1>Dogs List</h1>
+
+            <input
+                className="input"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search dog by name..."
+                />
+
             <ul className="list-group">
-                {dogs.map((dog, index) => (
-                    <li key={dog.getId()} className="list-group-item">
+                {filteredDogs.map((dog, index) => (
+                    <li key={dog.getId()} className="list-group-item" id={`list-item-${dog.getId()}`}>
                         <strong>{dog.getName()}</strong> - Weight: {dog.getWeight()} kg, Age: {dog.getAge()} years
                         <button onClick={() => handleDelete(index)}>X</button>
-                        <button onClick={() => handleUpdate(index)}>Update</button>
+                        <button onClick={() => handleUpdate(index)} id={`update-button-${dog.getId()}`}>Update</button>
                     </li>
                 ))}
             </ul>
+
+            {/*<ul className="list-group">
+                {dogs.map((dog, index) => (
+                    <li key={dog.getId()} className="list-group-item"  id={`list-item-${dog.getId()}`}>
+                        <strong>{dog.getName()}</strong> - Weight: {dog.getWeight()} kg, Age: {dog.getAge()} years
+                        <button onClick={() => handleDelete(index)}>X</button>
+                        <button onClick={() => handleUpdate(index)} id={`update-button-${dog.getId()}`}>Update</button>
+                    </li>
+                ))}
+            </ul>*/}
 
             {isModalOpenUpdate && selectedDogIndex!=null && (
                 <ModalUpdate isOpen={true} onClose={handleCloseModalUpdate} onSubmit={handleUpdateSubmit} dog={dogs[selectedDogIndex]}/>
@@ -86,6 +110,7 @@ function CRUD() {
             {isModalOpenAdd  &&(
                 <ModalAddDog isOpen={true} onClose={handleCloseModalAdd} onSubmit={handleAddSubmit} />
             )}
+
         </>
     );
 }
