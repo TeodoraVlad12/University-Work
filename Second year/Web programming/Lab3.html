@@ -2,9 +2,12 @@
 <html>
 <head>
     <style>
-        *{box-sizing: border-box;}
-        body{
-            margin: 0 ;
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
             font-family: Arial, Arial, Helvetica, sans-serif, sans-serif;
         }
 
@@ -25,23 +28,20 @@
                 padding: 10px 22px;
                 text-decoration: none;
                 font-size: 17px;
-                
             }
 
-        .topnav a:hover {
-           
-            color: royalblue;
-        }
+                .topnav a:hover {
+                    color: royalblue;
+                }
 
 
-        /*.topnav .search-container {
+            /*.topnav .search-container {
             float: right;
         }*/
 
             .topnav input[type=text] {
                 padding: 6px;
                 background-color: #F4F6F6;
-                
                 font-size: 15px;
                 border: none;
                 width: 650px;
@@ -62,9 +62,9 @@
             margin: 1px;
         }
 
-            .buttonLogIn:hover, .buttonWorld:hover {
-                background-color: #E5E8E8;
-            }
+        .buttonLogIn:hover, .buttonWorld:hover {
+            background-color: #E5E8E8;
+        }
 
         .buttonSignUp {
             background-color: black;
@@ -72,7 +72,7 @@
         }
 
         .black-part {
-            background-color: black;
+            background-color: #2C2C2E;
             height: 350px; /* Adjust height as needed */
             width: 100%;
             position: fixed;
@@ -82,13 +82,14 @@
 
         .white-part {
             border: 2px solid white;
-            background-color: pink;
+            background-color: white;
             height: 600px; /* Adjust height as needed */
             width: 320px; /* Adjust width as needed */
             position: absolute;
             top: 120px; /* Height of the navigation bar plus space */
             right: 170px; /* Add space from the right margin */
             z-index: 2; /* Ensure it's in front of the black part */
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
         }
 
         .white-part-down {
@@ -103,6 +104,64 @@
             border: 1px solid black;
         }
 
+        p.paragraf1 {
+            font-size: 30px;
+            margin-left: 20px;
+        }
+
+        div.buttons {
+            margin-left: 20px;
+        }
+
+        button.butonMov {
+            width: 270px;
+            height: 45px;
+            background-color: #B93BD8;
+            margin: 0px;
+            color: white;
+            font-size: 17px;
+        }
+
+        button.butonAlb {
+            width: 270px;
+            height: 45px;
+            margin-top: 5px;
+            font-size: 17px;
+        }
+
+        button.butonMov:hover {
+            background-color: #9D2DB8;
+        }
+
+        button.butonAlb:hover {
+            background-color: #C6C9CF;
+        }
+
+        p.moneyBack {
+            font-size: 10px;
+            text-align: center;
+            color: #56585A;
+        }
+
+        p.include {
+            text-align: left;
+            margin-left: 20px;
+        }
+
+        table {
+            margin-left: 20px;
+        }
+
+        p.paragrafNegru {
+            margin-left: 250px;
+        }
+
+        ul {
+            columns: 2;
+            -webkit-columns: 2;
+            -moz-columns: 2;
+            list-style-type: "\2713";
+        }
     </style>
 </head>
 <body>
@@ -123,10 +182,82 @@
         <button type="button" class="button buttonSignUp" onclick="alert('Hello world!')"><b>Sign up</b></button>
         <button type="button" class="button buttonWorld" onclick="alert('Hello world!')"><img src="globe.png" alt="globe" width="20" height="15"></button>
 
-        <div class="black-part"></div>
-        <div class="white-part"></div>
+        <div class="black-part">
+            <p class="paragrafNegru">
+                <span style="color: #7094CF; "><br /><b>Development > Web Development > Web Development </b></span><br /> <br />
+                <span style="color: white; font-size: 35px; "><b>  The Web Developer Bootcamp 2024 </b></span><br /><br />
+                <span style="color: white; font-size: 16px; "> 10 Hours of React just added. Become a Developer With ONE course - HTML, CSS, JavaScript, React, <br />Node, MongoDB and More!</span><br /><br />
+                <span style="color: #7094CF; font-size: 10px;"><img src="ratings.png" alt="ratings" height="17"> </span> <br /><br />
+                <span><img src="created.png" alt="created" height="17"></span> <br /><br />
+                <span><img src="lastUpdated.png" alt="lastUpdated" height="22"></span>
+            </p>
+        </div>
+
+
+
+        <div class="white-part">
+            <p style="margin:0;">
+                <video width="318" style="border: 1px solid white;" controls>
+                    <source src="dog_video.mp4" type="video/mp4">
+                </video>
+            </p>
+
+            <p class="paragraf1">
+
+                <b> RON499.99  </b>
+            </p>
+            <div class="buttons">
+                <button class="butonMov"><b>Add to cart</b> </button> <br />
+                <button class="butonAlb"><b>Buy now</b> </button>
+            </div>
+            <p class="moneyBack"><br />30-Day Money-Back Guarantee</p>
+
+            <p class="include"><br /><b>This course includes:</b></p>
+
+            <p class="tabel">
+                <table>
+                    <tr>
+                        <td><img src="video.png" alt="video" width="20" height="15"></td>
+                        <td>73.5 hours on-demand video</td>
+                    </tr>
+                    <tr>
+                        <td><img src="coding.png" alt="coding" width="20" height="15"></td>
+                        <td>62 coding exercises</td>
+                    </tr>
+                    <tr>
+                        <td><img src="articles.png" alt="articles" width="20" height="15"></td>
+                        <td>60 articles</td>
+                    </tr>
+                    <tr>
+                        <td><img src="downloadable.png" alt="downloadable" width="20" height="15"></td>
+                        <td>133 downloadable resources</td>
+                    </tr>
+                    <tr>
+                        <td><img src="mobile.png" alt="mobile" width="20" height="15"></td>
+                        <td>Access on mobile and TV</td>
+                    </tr>
+                </table>
+            </p>
+        </div>
+
+
         <div class="white-part-down">
-            <p>Text.</p>
+            <p>
+                <span style="color: black; font-size: 21px; margin-left: 30px"><b>  What you'll learn: </b></span><br />
+
+                <ul style="color: #3E4042; font-size: 14px">
+                    <li>The ins and outs of HTML5, CSS3, and Modern JavaScript for 2021</li>
+                    <li>Create responsive, accessible, and beautiful layouts</li>
+                    <li>Continue to learn and grow as a developer, long after the course ends</li>
+                    <li>Create a complicated yelp-like application from scratch</li>
+                    <li>Create static HTML and CSS portfolio sites and landing pages</li>
+                    <li>Make REAL web applications using cutting-edge technologies</li>
+                    <li>Recognize and prevent common security exploits like SQL-Injection & XSS</li>
+                    <li>Create a blog application from scratch using Node, Express, and MongoDB.</li>
+                    <li>Think like a developer. Become an expert at Googling code questions!</li>
+                </ul>
+
+            </p>
         </div>
 
     </div>
