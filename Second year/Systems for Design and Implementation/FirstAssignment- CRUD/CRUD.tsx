@@ -8,6 +8,12 @@ import "./CRUD.css"
 function CRUD() {
     const [dogs, setDogs] = useState<Dog[]>([
         new Dog(1, 'Buddy', 25.5, 3),
+        new Dog(2, 'Bu', 10, 10),
+        new Dog(3, 'Albu', 13.2, 6),
+        new Dog(4, 'Max', 25, 2),
+        new Dog(5, 'Bella', 26.1, 1),
+        new Dog(6, 'Mark', 10, 11),
+        new Dog(7, 'Rexy', 3, 14),
 
     ]);
 
@@ -15,6 +21,13 @@ function CRUD() {
     const [isModalOpenAdd, setIsModalOpenAdd] = useState<boolean>(false);
     const [selectedDogIndex, setSelectedDogIndex] = useState<number | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>('');
+
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const dogsPerPage = 3;
+
+
+
+
 
     const handleUpdate = (index: number) => {
         setSelectedDogIndex(index);
@@ -69,6 +82,14 @@ function CRUD() {
         dog.getName().toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+
+    const indexOfLastDog = currentPage * dogsPerPage;
+    const indexOfFirstDog = indexOfLastDog - dogsPerPage;
+    const currentDogs = filteredDogs.slice(indexOfFirstDog, indexOfLastDog);
+    //slice: [indexOfFirstDog, indexOfLastDog)
+
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
     return (
         <>
             <h1>Dogs List</h1>
@@ -79,40 +100,40 @@ function CRUD() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search dog by name..."
-                />
+            />
 
             <ul className="list-group">
-                {filteredDogs.map((dog, index) => (
-                    <li key={dog.getId()} className="list-group-item" id={`list-item-${dog.getId()}`}>
+                {currentDogs.map((dog, index) => (
+                    <li key={dog.getId()} className="list-group-item" id={`list-item-${dog.getId()}`} data-testid={`list-item-${dog.getId()}`}>
                         <strong>{dog.getName()}</strong> - Weight: {dog.getWeight()} kg, Age: {dog.getAge()} years
-                        <button onClick={() => handleDelete(index)}>X</button>
-                        <button onClick={() => handleUpdate(index)} id={`update-button-${dog.getId()}`}>Update</button>
+                        {/*<button onClick={() => handleDelete(index)}>X</button>*/}
+                        <button onClick={() => handleDelete(index)} id={`delete-button-${dog.getId()}`} data-testid={`delete-button-${dog.getId()}`}>X</button>
+                        {/* <button onClick={() => handleUpdate(index)} id={`update-button-${dog.getId()}`}>Update</button>*/}
+                        <button onClick={() => handleUpdate(index)} id={`update-button-${dog.getId()}`} data-testid={`update-button-${dog.getId()}`}>Update</button>
                     </li>
                 ))}
             </ul>
 
-            {/*<ul className="list-group">
-                {dogs.map((dog, index) => (
-                    <li key={dog.getId()} className="list-group-item"  id={`list-item-${dog.getId()}`}>
-                        <strong>{dog.getName()}</strong> - Weight: {dog.getWeight()} kg, Age: {dog.getAge()} years
-                        <button onClick={() => handleDelete(index)}>X</button>
-                        <button onClick={() => handleUpdate(index)} id={`update-button-${dog.getId()}`}>Update</button>
+            <ul className="pagination" style={{ display: 'flex', listStyle: 'none' }}>
+                {/*we compute the number of pages needed*/}
+                {Array.from({ length: Math.ceil(filteredDogs.length / dogsPerPage) }, (_, i) => (
+                    <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+                        <button onClick={() => paginate(i + 1)} className="page-link">{i + 1}</button>
                     </li>
                 ))}
-            </ul>*/}
+            </ul>
 
-            {isModalOpenUpdate && selectedDogIndex!=null && (
-                <ModalUpdate isOpen={true} onClose={handleCloseModalUpdate} onSubmit={handleUpdateSubmit} dog={dogs[selectedDogIndex]}/>
+            {isModalOpenUpdate && selectedDogIndex != null && (
+                <ModalUpdate isOpen={true} onClose={handleCloseModalUpdate} onSubmit={handleUpdateSubmit} dog={dogs[selectedDogIndex]} />
             )}
 
             <button onClick={() => handleAdd()}>Add Dog</button>
 
-            {isModalOpenAdd  &&(
+            {isModalOpenAdd && (
                 <ModalAddDog isOpen={true} onClose={handleCloseModalAdd} onSubmit={handleAddSubmit} />
             )}
 
         </>
     );
 }
-
 export default CRUD;
