@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+
+        body {
+            background-color: #85CEBD;
+        }
+
+        .dropbtn {
+            background-color: #74DE7E;
+            color: white;
+            width: 200px;
+            height: 100px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 20px;
+            margin-left: 300px;
+            margin-top: 150px;
+            margin: 0;
+        }
+
+            .dropbtn:hover {
+                background-color: #139174;
+            }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            background-color: #f1f1f1;
+            width: 200px;
+            /* margin-left: 300px;*/
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            margin: 0;
+        }
+
+        .dropMenuHome {
+            display: none;
+        }
+
+        .dropMenuAbout {
+            display: none;
+        }
+
+        .dropMenuContact {
+            display: none;
+        }
+
+        .dropMenuSettings {
+            display: none;
+        }
+
+        .dropMenuProducts {
+            display: none;
+        }
+
+        .dropdown-content button {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border: none; /* Remove button border */
+            width: 100%; /* Make button width 100% */
+            text-align: left;
+            background-color: #A1ECA8;
+            color: white;
+        }
+
+
+        .dropMenuHome a, .dropMenuContact a, .dropMenuAbout a, .dropMenuProducts a, .dropMenuSettings a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+
+        .dropdown button:hover {
+            background-color: #ddd;
+        }
+
+        .show {
+            display: block;
+        }
+    </style>
+</head>
+<body style="background-color:white;">
+
+    <div class="dropdown">
+        <button onclick="toggleDropdown()" class="dropbtn">Dropdown</button>
+        <div id="myDropdown" class="dropdown-content">
+
+            <button onclick="toggleSubmenuHome()" class="toggleSubmenuHome"><b>Home</b></button>
+            <div id="subMenuDropHome" class="dropMenuHome">
+                <a href="#home1">Home1</a>
+                <a href="#home2">Home2</a>
+                <a href="#home3">Home3</a>
+            </div>
+
+            <button onclick="toggleSubmenuAbout()" class="toggleSubmenuAbout"><b>About</b></button>
+            <div id="subMenuDropAbout" class="dropMenuAbout">
+                <a href="#about1">About1</a>
+                <a href="#about2">About2</a>
+                <a href="#about3">About3</a>
+            </div>
+
+            <button onclick="toggleSubmenuContact()" class="toggleSubmenuContact"><b>Contact</b></button>
+            <div id="subMenuDropContact" class="dropMenuContact">
+                <a href="#contact1">Contact1</a>
+                <a href="#contact2">Contact2</a>
+                <a href="#contact3">Contact3</a>
+            </div>
+
+            <button onclick="toggleSubmenuSettings()" class="toggleSubmenuSettings"><b>Settings</b></button>
+            <div id="subMenuDropSettings" class="dropMenuSettings">
+                <a href="#settings1">Settings1</a>
+                <a href="#settings2">Settings2</a>
+                <a href="#settings3">Settngs3</a>
+            </div>
+
+            <button onclick="toggleSubmenuProducts()" class="toggleSubmenuProducts"><b>Products</b></button>
+            <div id="subMenuDropProducts" class="dropMenuProducts">
+                <a href="#products1">Products1</a>
+                <a href="#products2">Products2</a>
+                <a href="#products3">Products3</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        
+
+        function toggleDropdown() {
+            var subMenuDrop = document.getElementById("myDropdown");
+            var subMenus = document.querySelectorAll('.dropdown-content > div');
+            if (subMenuDrop) {
+                document.getElementById("myDropdown").classList.toggle("show");
+                // Close all submenus
+                subMenus.forEach(function (subMenu) {
+                    subMenu.classList.remove('show');
+                });
+            } else {
+                subMenuDrop.classList.toggle("show");
+            }
+        }
+
+        function toggleSubmenuHome() {
+            var subMenuDrop = document.getElementById("subMenuDropHome");
+            if (subMenuDrop) {
+                document.getElementById("subMenuDropHome").classList.toggle("show");
+            } else {
+                subMenuDrop.classList.toggle("show");
+            }
+        }
+
+        function toggleSubmenuAbout() {
+            var subMenuDrop = document.getElementById("subMenuDropAbout");
+            if (subMenuDrop) {
+                document.getElementById("subMenuDropAbout").classList.toggle("show");
+            } else {
+                subMenuDrop.classList.toggle("show");
+            }
+        }
+
+        function toggleSubmenuContact() {
+            var subMenuDrop = document.getElementById("subMenuDropContact");
+            if (subMenuDrop) {
+                document.getElementById("subMenuDropContact").classList.toggle("show");
+            } else {
+                subMenuDrop.classList.toggle("show");
+            }
+        }
+
+        function toggleSubmenuProducts() {
+            var subMenuDrop = document.getElementById("subMenuDropProducts");
+            if (subMenuDrop) {
+                document.getElementById("subMenuDropProducts").classList.toggle("show");
+            } else {
+                subMenuDrop.classList.toggle("show");
+            }
+        }
+
+        function toggleSubmenuSettings() {
+            var subMenuDrop = document.getElementById("subMenuDropSettings");
+            if (subMenuDrop) {
+                document.getElementById("subMenuDropSettings").classList.toggle("show");
+            } else {
+                subMenuDrop.classList.toggle("show");
+            }
+        }
+
+
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+        <!--window.onclick = function (event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }-->
