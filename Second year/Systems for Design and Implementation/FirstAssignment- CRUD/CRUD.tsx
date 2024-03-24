@@ -4,6 +4,9 @@ import ModalUpdate from './ModalUpdate';
 import ModalAddDog from './ModalAddDog';
 import "./ModalUpdate.css";
 import "./CRUD.css"
+import BarChart from "./BarChart";
+import PieChart from "./PieChart";
+
 
 function CRUD() {
     const [dogs, setDogs] = useState<Dog[]>([
@@ -91,7 +94,8 @@ function CRUD() {
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
     return (
-        <>
+        <div className="container">
+            <div className="left">
             <h1>Dogs List</h1>
 
             <input
@@ -132,8 +136,17 @@ function CRUD() {
             {isModalOpenAdd && (
                 <ModalAddDog isOpen={true} onClose={handleCloseModalAdd} onSubmit={handleAddSubmit} />
             )}
+            </div>
 
-        </>
+
+
+            <div className="right" style={{ width: 700 }}>
+                <BarChart dogs={dogs} />
+
+                {/*<PieChart dogs={dogs} />*/}
+            </div>
+
+        </div>
     );
 }
 export default CRUD;
