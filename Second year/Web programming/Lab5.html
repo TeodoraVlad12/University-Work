@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title>JQuery Lab</title>
+    <style>
+
+        body {
+            background-color: #F3CDE2;
+        }
+
+        /*dialog window */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: lightpink;
+            z-index: 1000;
+            display: none;
+        }
+
+        #dialog-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /*element is centered even if its size changes*/
+            background-color: navajowhite;
+            border: 1px solid #ccc;
+            padding: 20px;
+            z-index: 1001;
+            display: none;
+            overflow: auto;      /*to add scrollbars*/
+            resize: both;
+            max-width: 80%;
+            max-height: 80%;
+        }
+
+        #dialog-title {
+            margin: 0;
+            padding: 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #dialog-content {
+            margin-top: 10px;
+        }
+
+        #close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        #open-dialog {
+            background-color: #DFBACE;
+            width: 150px;
+            height: 80px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <button id="open-dialog">Open Dialog</button>
+
+    <div id="overlay"></div>
+
+    <div id="dialog-box">
+        <span id="close-btn">&times;</span>
+        <h2 id="dialog-title">The boomerang</h2>
+        <div id="dialog-content">
+            
+            <p>
+                A boomerang is a thrown tool typically constructed with airfoil sections and designed to spin about an axis perpendicular to the direction of its flight. A returning boomerang is designed to return to the thrower, while a non-returning boomerang is designed as a weapon to be thrown straight and is traditionally used by some Aboriginal Australians for hunting.
+
+                Historically, boomerangs have been used for hunting, sport, and entertainment and are made in various shapes and sizes to suit different purposes. Although considered an Australian icon, ancient boomerangs have also been discovered in Africa, the Americas, and Eurasia.
+            </p>
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            
+            $("#open-dialog").click(function () {
+                $("#overlay").show();
+                $("#dialog-box").show();
+            });
+
+            
+            $("#close-btn").click(function () {
+                $("#overlay").hide();
+                $("#dialog-box").hide();
+            });
+
+            
+           /* $("#overlay").click(function () {
+                $("#overlay").hide();
+                $("#dialog-box").hide();
+            });*/
+
+            //we prevent bubbling up the DOM tree (it prevents any parent elements from receiving the click event that originated from the dialog box)
+            $("#dialog-box").click(function (event) {
+                event.stopPropagation();
+            });
+        });
+    </script>
+
+</body>
+</html>
