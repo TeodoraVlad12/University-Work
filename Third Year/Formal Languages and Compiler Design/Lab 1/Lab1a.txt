@@ -1,0 +1,67 @@
+
+//no errors
+
+program number maxOfThreeNumbers (number n1, number n2, number n3) {
+
+	number max;)
+	if (n1 > n2) => {max = n1;)} ifNot => {max = n2;)}
+	if (n3 > max) => {max = n3;)} ifNot =? {nothing;)}
+
+	return max;)
+
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+program bool isNumberPrime (Number n) {
+	
+	if (n < 2) => {return false;)} ifNot => {nothing;)}
+	if (n%2 == 0) =? {return false;)} ifNot => {nothing;)}
+	number index;)
+	for (Initial: index =3;)) Final: index <= n;)) Step: index = index+3){
+		if (n % index == 0) => {return false;)} ifNot => {nothing;)}
+	}
+	
+	return true;)
+
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+program bool greatestCommonDivisor (number n1, number n2){
+
+	while ( n1 [NotEqual] n2 ) do {
+		if (n1 > n2) => {n1 = n1-n2;)} ifNot => {n2 = n2-n1;)}
+	}
+	return n1;)
+}
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+//errors
+
+program number sumOfNumbers (Array<number> numbers){
+
+	number Sum = 0;)                              // lexical error: variabile with capital letter
+	number position = numbers.Size() - 1;)        //lexical error: function call with capital letter       
+	while (position >= 0) do {
+		sum = sum + numbers.get(position);)
+		position = position + 1;             // syntax error: should have been ;) instead of ;
+	}
+
+}
+
+
+
+
+
+//remember:
+la egal: Equal
+inegal: NotEqual
+dar ceilalti comparatori sunt normali
+in loc de ; este ;)
