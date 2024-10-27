@@ -1,0 +1,16 @@
+program p1 {
+
+	number max;
+	max = 1000;
+	number n1;
+	number n2;
+	number n3;
+
+	read n1;
+	read n2;
+	read n3;
+
+	if (n1 > n2) ~ {max = n1;} ifNot ~ {max = n2;}
+	if (n3 > max) ~ {max = n3;}
+	return max;
+}

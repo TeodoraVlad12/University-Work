@@ -1,0 +1,14 @@
+program p1err {
+
+	number Sum;
+	number n1;
+	number nN;
+
+	read n1;
+	read 2N;
+
+	Sum = n1 + 2N;
+
+	write Sum;
+
+}

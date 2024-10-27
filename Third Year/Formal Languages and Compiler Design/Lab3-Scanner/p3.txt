@@ -1,0 +1,13 @@
+program p3 {
+
+    number n1;
+    number n2;
+    read n1;
+    read n2;
+
+	while ( n1 NotEqual n2 ) do {
+		if (n1 > n2) ~ {n1 = n1-n2;} ifNot ~ {n2 = n2-n1;}
+	}
+
+	return n1;
+}

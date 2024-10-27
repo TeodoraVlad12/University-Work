@@ -1,0 +1,15 @@
+program p2 {
+    number n;
+
+    read n;
+
+	if (n < 2) ~ {return false;}
+	if (n%2 Equal 0) ~ {return false;}
+	number index;
+	for (index =3; index <= n; index = index+3){
+		if (n % index Equal 0) ~ {return false;}
+	}
+
+	return true;
+
+}

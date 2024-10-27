@@ -1,0 +1,4 @@
+Symbol table identifiers: 
+SymbolTable: HashTable = [['n'], [], ['p2'], [], [], [], ['index'], [], [], []]
+Symbol table constants: 
+SymbolTable: HashTable = [['2'], ['3'], [], [], [], [], [], [], ['0'], []]
