@@ -1,0 +1,147 @@
+Program StatementList Statement Declaration IdentifierList MaybeEqualExpression Expression IntExpression StringExpression BooleanExpression Condition OptionalElse Loop FunctionCall Assignment ReturnStatement ExpressionList Operator RelationalOperator LogicalOperator Identifier RestOfIdentifier Letter Digit NonZeroDigit IntConstant IntConstantRest StringConstant StringInterior
++ - * ** / : > < <= = Equal NotEqual && || ! >= % ( ) [ ] { } ~ ; , _ space \n " list string program char number else if ifNot while do for read false true write return epsilon 0 1 2 3 4 5 6 7 8 9 A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z
+Program
+Program -> program Identifier { StatementList }
+Program -> epsilon
+StatementList -> Statement ; StatementList
+StatementList -> epsilon
+Statement -> Declaration
+Statement -> Assignment
+Statement -> FunctionCall
+Statement -> Loop
+Statement -> Condition
+Statement -> ReturnStatement
+Declaration -> number IdentifierList
+Declaration -> string IdentifierList
+Declaration -> list IdentifierList
+Declaration -> char IdentifierList
+IdentifierList -> Identifier MaybeEqualExpression
+IdentifierList -> Identifier MaybeEqualExpression , IdentifierList
+MaybeEqualExpression -> = Expression
+MaybeEqualExpression -> epsilon
+Expression -> IntExpression
+Expression -> StringExpression
+Expression -> BooleanExpression
+IntExpression -> IntExpression Operator IntExpression
+IntExpression -> ( IntExpression Operator IntExpression )
+IntExpression -> IntConstant
+IntExpression -> Identifier
+StringExpression -> StringConstant
+StringExpression -> Identifier
+BooleanExpression -> true
+BooleanExpression -> false
+Condition -> if ( Expression RelationalOperator Expression ) ~ { StatementList } OptionalElse
+OptionalElse -> ifNot ~ { StatementList }
+OptionalElse -> epsilon
+Loop -> while ( Expression RelationalOperator Expression ) do { StatementList }
+Loop -> for ( Assignment ; Expression ; Assignment ) { StatementList }
+FunctionCall -> write ( ExpressionList )
+FunctionCall -> read Identifier
+FunctionCall -> Identifier ( ExpressionList )
+FunctionCall -> Identifier ( )
+Assignment -> Identifier = Expression
+ReturnStatement -> return Expression
+ExpressionList -> Expression
+ExpressionList -> Expression , ExpressionList
+Operator -> +
+Operator -> -
+Operator -> *
+Operator -> /
+Operator -> %
+Operator -> **
+RelationalOperator -> >
+RelationalOperator -> <
+RelationalOperator -> <=
+RelationalOperator -> >=
+RelationalOperator -> =
+RelationalOperator -> Equal
+RelationalOperator -> NotEqual
+LogicalOperator -> &&
+LogicalOperator -> ||
+LogicalOperator -> !
+Identifier -> Letter RestOfIdentifier
+RestOfIdentifier -> epsilon
+RestOfIdentifier -> Letter RestOfIdentifier
+RestOfIdentifier -> Digit RestOfIdentifier
+RestOfIdentifier -> _ RestOfIdentifier
+Letter -> A
+Letter -> B
+Letter -> C
+Letter -> D
+Letter -> E
+Letter -> F
+Letter -> G
+Letter -> H
+Letter -> I
+Letter -> J
+Letter -> K
+Letter -> L
+Letter -> M
+Letter -> N
+Letter -> O
+Letter -> P
+Letter -> Q
+Letter -> R
+Letter -> S
+Letter -> T
+Letter -> U
+Letter -> V
+Letter -> W
+Letter -> X
+Letter -> Y
+Letter -> Z
+Letter -> a
+Letter -> b
+Letter -> c
+Letter -> d
+Letter -> e
+Letter -> f
+Letter -> g
+Letter -> h
+Letter -> i
+Letter -> j
+Letter -> k
+Letter -> l
+Letter -> m
+Letter -> n
+Letter -> o
+Letter -> p
+Letter -> q
+Letter -> r
+Letter -> s
+Letter -> t
+Letter -> u
+Letter -> v
+Letter -> w
+Letter -> x
+Letter -> y
+Letter -> z
+Digit -> 0
+Digit -> 1
+Digit -> 2
+Digit -> 3
+Digit -> 4
+Digit -> 5
+Digit -> 6
+Digit -> 7
+Digit -> 8
+Digit -> 9
+NonZeroDigit -> 1
+NonZeroDigit -> 2
+NonZeroDigit -> 3
+NonZeroDigit -> 4
+NonZeroDigit -> 5
+NonZeroDigit -> 6
+NonZeroDigit -> 7
+NonZeroDigit -> 8
+NonZeroDigit -> 9
+IntConstant -> Digit IntConstantRest
+IntConstantRest -> epsilon
+IntConstantRest -> Digit IntConstantRest
+StringConstant -> " StringInterior "
+StringInterior -> epsilon
+StringInterior -> Letter StringInterior
+StringInterior -> Digit StringInterior
+StringInterior -> _ StringInterior
+StringInterior -> space StringInterior
+StringInterior -> LogicalOperator StringInterior
